@@ -1,0 +1,120 @@
+groups:
+  - name: wishlist-app.rules
+    rules:
+      # Алерты для безопасности
+      - alert: HighAuthenticationFailures
+        expr: increase(security_auth_failures_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: wishlist-app
+        annotations:
+          summary: "Высокое количество неудачных аутентификаций"
+          description: "За последние 5 минут было более 10 неудачных попыток входа"
+
+      - alert: CriticalAuthenticationFailures
+        expr: increase(security_auth_failures_total[5m]) > 50
+        for: 1m
+        labels:
+          severity: critical
+          service: wishlist-app
+        annotations:
+          summary: "Критическое количество неудачных аутентификаций"
+          description: "За последние 5 минут было более 50 неудачных попыток входа - возможна атака"
+
+      # Алерты для производительности
+      - alert: HighParsingErrors
+        expr: rate(price_parsing_errors_total[5m]) / rate(price_parsing_attempts_total[5m]) > 0.5
+        for: 3m
+        labels:
+          severity: warning
+          service: wishlist-app
+        annotations:
+          summary: "Высокий процент ошибок парсинга цен"
+          description: "Более 50% попыток парсинга цен завершаются с ошибкой"
+
+      - alert: SlowParsing
+        expr: histogram_quantile(0.95, rate(price_parsing_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: wishlist-app
+        annotations:
+          summary: "Медленное выполнение парсинга цен"
+          description: "95-й перцентиль времени парсинга превышает 5 секунд"
+
+      # Алерты для HTTP запросов
+      - alert: HighHTTPErrors
+        expr: rate(http_requests_error_total[5m]) / rate(http_requests_total[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: wishlist-app
+        annotations:
+          summary: "Высокий процент HTTP ошибок"
+          description: "Более 10% HTTP запросов завершаются с ошибкой"
+
+      - alert: CriticalHTTPErrors
+        expr: rate(http_requests_error_total[5m]) / rate(http_requests_total[5m]) > 0.3
+        for: 1m
+        labels:
+          severity: critical
+          service: wishlist-app
+        annotations:
+          summary: "Критический уровень HTTP ошибок"
+          description: "Более 30% HTTP запросов завершаются с ошибкой"
+
+      # Алерты для доступности приложения
+      - alert: ApplicationDown
+        expr: up{job="wishlist-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: wishlist-app
+        annotations:
+          summary: "Приложение недоступно"
+          description: "Приложение wishlist-app не отвечает на запросы"
+
+      # Алерты для бизнес-метрик
+      - alert: LowUserActivity
+        expr: increase(user_logins_total[1h]) < 1
+        for: 2h
+        labels:
+          severity: info
+          service: wishlist-app
+        annotations:
+          summary: "Низкая активность пользователей"
+          description: "За последний час не было ни одного входа пользователя"
+
+      - alert: HighPasswordResetRequests
+        expr: increase(password_reset_requests_total[1h]) > 20
+        for: 5m
+        labels:
+          severity: warning
+          service: wishlist-app
+        annotations:
+          summary: "Высокое количество запросов на сброс пароля"
+          description: "За последний час было более 20 запросов на сброс пароля"
+
+  - name: system.rules
+    rules:
+      # Алерты для системных ресурсов
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "Высокая загрузка CPU"
+          description: "Загрузка CPU превышает 80%"
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "Высокое использование памяти"
+          description: "Использование памяти превышает 85%"

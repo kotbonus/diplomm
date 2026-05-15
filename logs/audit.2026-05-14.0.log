@@ -1,0 +1,2 @@
+2026-05-14 11:39:44.061 INFO  AUDIT - USER_REGISTERED: email=kk***@gmail.com, userId=6, publicId=cdcc8256
+2026-05-14 11:39:46.681 INFO  AUDIT - USER_AUTHENTICATED: email=kk***@gmail.com, userId=6, publicId=cdcc8256

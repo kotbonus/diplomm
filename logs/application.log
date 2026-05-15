@@ -1,0 +1,87 @@
+2026-05-15 12:35:21.945 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=22h45m15s253ms528µs600ns).
+2026-05-15 12:38:56.791 WARN  o.s.b.f.s.DisposableBeanAdapter - Invocation of destroy method failed on bean with name 'inMemoryDatabaseShutdownExecutor': org.h2.jdbc.JdbcSQLNonTransientConnectionException: База данных уже закрыта (чтобы отключить автоматическое закрытие базы данных при останове JVM, добавьте ";DB_CLOSE_ON_EXIT=FALSE" в URL)
+Database is already closed (to disable automatic closing at VM shutdown, add ";DB_CLOSE_ON_EXIT=FALSE" to the db URL) [90121-224]
+2026-05-15 12:38:56.793 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-05-15 12:38:56.800 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-05-15 13:13:36.359 INFO  grpc.demo.DiplomApplication - Starting DiplomApplication using Java 21.0.8 with PID 14884 (D:\5 КУРС\diplomm\target\classes started by k2528 in D:\5 КУРС\diplomm)
+2026-05-15 13:13:36.366 INFO  grpc.demo.DiplomApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-15 13:13:39.674 INFO  c.u.j.c.EnableEncryptablePropertiesBeanFactoryPostProcessor - Post-processing PropertySource instances
+2026-05-15 13:13:39.676 INFO  c.u.j.EncryptablePropertySourceConverter - Skipping PropertySource configurationProperties [class org.springframework.boot.context.properties.source.ConfigurationPropertySourcesPropertySource
+2026-05-15 13:13:39.679 INFO  c.u.j.EncryptablePropertySourceConverter - Skipping PropertySource servletConfigInitParams [class org.springframework.core.env.PropertySource$StubPropertySource
+2026-05-15 13:13:39.679 INFO  c.u.j.EncryptablePropertySourceConverter - Skipping PropertySource servletContextInitParams [class org.springframework.core.env.PropertySource$StubPropertySource
+2026-05-15 13:13:39.681 INFO  c.u.j.EncryptablePropertySourceConverter - Converting PropertySource systemProperties [org.springframework.core.env.PropertiesPropertySource] to EncryptableMapPropertySourceWrapper
+2026-05-15 13:13:39.681 INFO  c.u.j.EncryptablePropertySourceConverter - Converting PropertySource systemEnvironment [org.springframework.boot.env.SystemEnvironmentPropertySourceEnvironmentPostProcessor$OriginAwareSystemEnvironmentPropertySource] to EncryptableSystemEnvironmentPropertySourceWrapper
+2026-05-15 13:13:39.682 INFO  c.u.j.EncryptablePropertySourceConverter - Converting PropertySource random [org.springframework.boot.env.RandomValuePropertySource] to EncryptablePropertySourceWrapper
+2026-05-15 13:13:39.682 INFO  c.u.j.EncryptablePropertySourceConverter - Converting PropertySource Config resource 'class path resource [application.properties]' via location 'optional:classpath:/' [org.springframework.boot.env.OriginTrackedMapPropertySource] to EncryptableMapPropertySourceWrapper
+2026-05-15 13:13:39.683 INFO  c.u.j.EncryptablePropertySourceConverter - Converting PropertySource devtools [org.springframework.core.env.MapPropertySource] to EncryptableMapPropertySourceWrapper
+2026-05-15 13:13:40.456 INFO  c.u.j.f.DefaultLazyPropertyFilter - Property Filter custom Bean not found with name 'encryptablePropertyFilter'. Initializing Default Property Filter
+2026-05-15 13:13:40.473 INFO  c.u.j.r.DefaultLazyPropertyResolver - Property Resolver custom Bean not found with name 'encryptablePropertyResolver'. Initializing Default Property Resolver
+2026-05-15 13:13:40.477 INFO  c.u.j.d.DefaultLazyPropertyDetector - Property Detector custom Bean not found with name 'encryptablePropertyDetector'. Initializing Default Property Detector
+2026-05-15 13:13:41.196 INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-05-15 13:13:41.198 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-15 13:13:41.199 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-05-15 13:13:41.319 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-15 13:13:42.683 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-05-15 13:13:43.057 INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:wishlistdb user=SA
+2026-05-15 13:13:43.060 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-05-15 13:13:43.120 WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-15 13:13:48.823 INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure EndpointRequestMatcher includes=[*], excludes=[], includeLinks=true with [org.springframework.security.web.session.DisableEncodeUrlFilter@5754ee9e, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@26957c77, org.springframework.security.web.context.SecurityContextHolderFilter@4ded1539, org.springframework.security.web.header.HeaderWriterFilter@61fd3687, org.springframework.web.filter.CorsFilter@36f09e8e, org.springframework.security.web.authentication.logout.LogoutFilter@4d822185, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@52b5568, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@19899abd, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@3eaa128b, org.springframework.security.web.access.ExceptionTranslationFilter@1cfafeb0, org.springframework.security.web.access.intercept.AuthorizationFilter@12a85b67]
+2026-05-15 13:13:48.957 INFO  o.s.s.web.DefaultSecurityFilterChain - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@578bf06d, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@71a8e637, org.springframework.security.web.context.SecurityContextHolderFilter@411615c9, org.springframework.security.web.header.HeaderWriterFilter@5ce1727a, org.springframework.web.filter.CorsFilter@7a66684e, org.springframework.security.web.csrf.CsrfFilter@523fea85, org.springframework.security.web.authentication.logout.LogoutFilter@502d52fb, grpc.demo.security.SessionAuthenticationFilter@6c535452, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6f0b4e6e, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@350d753b, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@768e262b, org.springframework.security.web.session.SessionManagementFilter@7e38d5a4, org.springframework.security.web.access.ExceptionTranslationFilter@2df720c7, org.springframework.security.web.access.intercept.AuthorizationFilter@4ac8c58c]
+2026-05-15 13:13:50.428 INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-05-15 13:13:50.450 INFO  c.u.j.c.RefreshScopeRefreshedEventListener - Refreshing cached encryptable property sources on ServletWebServerInitializedEvent
+2026-05-15 13:13:50.451 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source systemProperties refreshed
+2026-05-15 13:13:50.451 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source systemEnvironment refreshed
+2026-05-15 13:13:50.451 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source random refreshed
+2026-05-15 13:13:50.452 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source Config resource 'class path resource [application.properties]' via location 'optional:classpath:/' refreshed
+2026-05-15 13:13:50.452 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source devtools refreshed
+2026-05-15 13:13:50.452 INFO  c.u.j.EncryptablePropertySourceConverter - Skipping PropertySource configurationProperties [class org.springframework.boot.context.properties.source.ConfigurationPropertySourcesPropertySource
+2026-05-15 13:13:50.452 INFO  c.u.j.EncryptablePropertySourceConverter - Skipping PropertySource servletConfigInitParams [class org.springframework.core.env.PropertySource$StubPropertySource
+2026-05-15 13:13:50.453 INFO  c.u.j.EncryptablePropertySourceConverter - Converting PropertySource servletContextInitParams [org.springframework.web.context.support.ServletContextPropertySource] to EncryptableEnumerablePropertySourceWrapper
+2026-05-15 13:13:50.593 INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2026-05-15 13:13:50.593 INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-15 13:13:50.593 INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2026-05-15 13:13:50.638 INFO  o.a.c.c.C.[Tomcat-1].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-15 13:13:50.730 INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2026-05-15 13:13:50.736 INFO  c.u.j.c.RefreshScopeRefreshedEventListener - Refreshing cached encryptable property sources on ServletWebServerInitializedEvent
+2026-05-15 13:13:50.737 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source servletContextInitParams refreshed
+2026-05-15 13:13:50.737 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source systemProperties refreshed
+2026-05-15 13:13:50.737 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source systemEnvironment refreshed
+2026-05-15 13:13:50.737 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source random refreshed
+2026-05-15 13:13:50.737 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source Config resource 'class path resource [application.properties]' via location 'optional:classpath:/' refreshed
+2026-05-15 13:13:50.738 INFO  c.u.j.c.CachingDelegateEncryptablePropertySource - Property Source devtools refreshed
+2026-05-15 13:13:50.738 INFO  c.u.j.EncryptablePropertySourceConverter - Converting PropertySource server.ports [org.springframework.core.env.MapPropertySource] to EncryptableMapPropertySourceWrapper
+2026-05-15 13:13:50.738 INFO  c.u.j.EncryptablePropertySourceConverter - Skipping PropertySource configurationProperties [class org.springframework.boot.context.properties.source.ConfigurationPropertySourcesPropertySource
+2026-05-15 13:13:50.738 INFO  c.u.j.EncryptablePropertySourceConverter - Skipping PropertySource servletConfigInitParams [class org.springframework.core.env.PropertySource$StubPropertySource
+2026-05-15 13:13:50.761 INFO  grpc.demo.DiplomApplication - Started DiplomApplication in 15.87 seconds (process running for 24.798)
+2026-05-15 13:13:52.533 INFO  o.a.c.c.C.[Tomcat-1].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServletRegistration'
+2026-05-15 13:13:52.572 WARN  o.s.w.s.h.HandlerMappingIntrospector - Cache miss for REQUEST dispatch to '/actuator/prometheus' (previous null). Performing CorsConfiguration lookup. This is logged once only at WARN level, and every time at TRACE.
+2026-05-15 13:15:04.497 INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-15 13:15:04.512 WARN  o.s.w.s.h.HandlerMappingIntrospector - Cache miss for REQUEST dispatch to '/auth/forgot-password' (previous null). Performing MatchableHandlerMapping lookup. This is logged once only at WARN level, and every time at TRACE.
+2026-05-15 13:24:20.941 INFO  grpc.demo.service.UserService - Начало регистрации пользователя: kk***@gmail.com
+2026-05-15 13:24:21.328 INFO  grpc.demo.service.UserService - Пользователь успешно зарегистрирован: userId=6, publicId=6080c274
+2026-05-15 13:24:23.869 INFO  grpc.demo.service.UserService - Попытка аутентификации пользователя: kk***@gmail.com
+2026-05-15 13:24:24.106 INFO  grpc.demo.service.UserService - Пользователь успешно аутентифицирован: userId=6
+2026-05-15 13:34:01.095 INFO  g.demo.service.PriceParsingService - Начало парсинга цены для URL: https://dvamyacha.ru/***
+2026-05-15 13:34:03.039 DEBUG g.demo.service.PriceParsingService - Используем специализированный парсер для dvamyacha.ru
+2026-05-15 13:34:03.062 INFO  g.demo.service.PriceParsingService - Цена успешно получена: 6540.0 руб. для URL: https://dvamyacha.ru/***
+2026-05-15 13:39:07.169 INFO  g.demo.service.PriceParsingService - Начало парсинга цены для URL: https://mvideo.ru/***
+2026-05-15 13:39:07.171 DEBUG g.demo.service.PriceParsingService - Используем API для М.Видео
+2026-05-15 13:41:43.379 INFO  g.demo.service.PriceParsingService - Начало парсинга цены для URL: https://bestmebelshop.ru/***
+2026-05-15 13:41:44.052 DEBUG g.demo.service.PriceParsingService - Используем универсальный парсер
+2026-05-15 13:41:44.055 INFO  g.demo.service.PriceParsingService - Цена успешно получена: 159.0 руб. для URL: https://bestmebelshop.ru/***
+2026-05-15 13:47:18.574 INFO  grpc.demo.service.UserService - Начало регистрации пользователя: **@gmail.com
+2026-05-15 13:47:18.745 INFO  grpc.demo.service.UserService - Пользователь успешно зарегистрирован: userId=7, publicId=adb5e3e3
+2026-05-15 13:47:24.800 INFO  grpc.demo.service.UserService - Попытка аутентификации пользователя: kk***@gmail.com
+2026-05-15 13:47:24.959 INFO  grpc.demo.service.UserService - Пользователь успешно аутентифицирован: userId=6
+2026-05-15 13:48:02.383 INFO  grpc.demo.service.UserService - Попытка аутентификации пользователя: **@gmail.com
+2026-05-15 13:48:02.542 INFO  grpc.demo.service.UserService - Пользователь успешно аутентифицирован: userId=7
+2026-05-15 13:48:38.645 INFO  grpc.demo.service.UserService - Попытка аутентификации пользователя: kk***@gmail.com
+2026-05-15 13:48:38.805 INFO  grpc.demo.service.UserService - Пользователь успешно аутентифицирован: userId=6
+2026-05-15 13:49:31.191 INFO  grpc.demo.service.UserService - Попытка аутентификации пользователя: **@gmail.com
+2026-05-15 13:49:31.362 INFO  grpc.demo.service.UserService - Пользователь успешно аутентифицирован: userId=7
+2026-05-15 14:35:24.360 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=15m40s460ms481µs600ns).
+2026-05-15 16:50:01.212 WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h45m3s281ms458µs700ns).
+2026-05-15 16:52:31.595 WARN  o.s.b.f.s.DisposableBeanAdapter - Invocation of destroy method failed on bean with name 'inMemoryDatabaseShutdownExecutor': org.h2.jdbc.JdbcSQLNonTransientConnectionException: База данных уже закрыта (чтобы отключить автоматическое закрытие базы данных при останове JVM, добавьте ";DB_CLOSE_ON_EXIT=FALSE" в URL)
+Database is already closed (to disable automatic closing at VM shutdown, add ";DB_CLOSE_ON_EXIT=FALSE" to the db URL) [90121-224]
+2026-05-15 16:52:31.596 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-05-15 16:52:31.598 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

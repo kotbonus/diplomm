@@ -1,0 +1,14 @@
+2026-05-09 12:42:32.195 INFO  AUDIT - USER_REGISTERED: email=**@gmail.com, userId=6, publicId=7d086b04
+2026-05-09 12:42:34.276 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=6, publicId=7d086b04
+2026-05-09 12:44:33.134 INFO  AUDIT - USER_REGISTERED: email=**@gmail.com, userId=6, publicId=a67f3d84
+2026-05-09 12:44:35.403 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=6, publicId=a67f3d84
+2026-05-09 12:52:19.391 INFO  AUDIT - USER_REGISTERED: email=**@gmail.com, userId=6, publicId=a9724fef
+2026-05-09 12:52:22.323 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=6, publicId=a9724fef
+2026-05-09 12:55:04.659 INFO  AUDIT - USER_REGISTERED: email=**@gmail.com, userId=6, publicId=ebabcbb8
+2026-05-09 12:55:07.105 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=6, publicId=ebabcbb8
+2026-05-09 13:10:35.019 INFO  AUDIT - USER_REGISTERED: email=**@gmail.com, userId=6, publicId=5daa64f2
+2026-05-09 13:10:37.440 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=6, publicId=5daa64f2
+2026-05-09 13:41:44.412 INFO  AUDIT - USER_REGISTERED: email=kk***@gmail.com, userId=7, publicId=0614533e
+2026-05-09 13:41:47.470 INFO  AUDIT - USER_AUTHENTICATED: email=kk***@gmail.com, userId=7, publicId=0614533e
+2026-05-09 15:25:05.067 INFO  AUDIT - USER_REGISTERED: email=**@gmail.com, userId=6, publicId=d8848b5e
+2026-05-09 15:25:07.972 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=6, publicId=d8848b5e

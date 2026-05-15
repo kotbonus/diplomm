@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Редактировать элемент</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        h1 {
+            color: #667eea;
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="url"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .priority-selector {
+            display: flex;
+            gap: 15px;
+        }
+        .priority-option {
+            flex: 1;
+            text-align: center;
+        }
+        .priority-option input[type="radio"] {
+            display: none;
+        }
+        .priority-option label {
+            display: block;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0;
+        }
+        .priority-option input[type="radio"]:checked + label {
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+        .priority-1 label { border-left: 4px solid #dc3545; }
+        .priority-2 label { border-left: 4px solid #ffc107; }
+        .priority-3 label { border-left: 4px solid #28a745; }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+        .help-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        .price-input-group {
+            display: flex;
+            align-items: center;
+        }
+        .price-status {
+            margin-top: 5px;
+            font-size: 12px;
+            padding: 5px;
+            border-radius: 4px;
+            display: none;
+        }
+        .price-status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .price-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .price-status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .discount-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+        }
+        .discount-badge {
+            background-color: #dc3545;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .original-price-info {
+            font-size: 12px;
+            color: #666;
+        }
+        nav {
+            margin: 20px 0;
+            text-align: center;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✏️ Редактировать желание</h1>
+        </header>
+        
+        <div th:replace="~{fragments/navigation :: navigation}"></div>
+        
+        <form th:action="@{/wishlist/edit/{id}(id=${item.id})}" th:object="${item}" method="post">
+            <div class="form-group">
+                <label for="title">Название *</label>
+                <input type="text" id="title" th:field="*{title}" required placeholder="Например: iPhone 15 Pro">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Описание</label>
+                <textarea id="description" th:field="*{description}" placeholder="Опишите, почему вы хотите это..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="link">Ссылка на товар</label>
+                <input type="url" id="link" th:field="*{link}" placeholder="https://example.com/product" onchange="checkPriceAvailability()">
+                <div class="help-text">Необязательно. Ссылка на интернет-магазин или страницу товара</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="imageUrl">URL изображения</label>
+                <input type="url" id="imageUrl" th:field="*{imageUrl}" placeholder="https://example.com/image.jpg" onchange="previewImage()">
+                <div class="help-text">Необязательно. Прямая ссылка на изображение товара</div>
+                <div id="imagePreview" style="margin-top: 10px;">
+                    <img id="previewImg" th:src="${item.imageUrl}" th:if="${item.imageUrl}" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd;" alt="Предпросмотр">
+                </div>
+            </div>
+            
+            <div class="form-group" id="priceTrackingGroup" style="display: none;">
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="autoPriceTracking" th:field="*{autoPriceTracking}" onchange="togglePriceInput()">
+                        <span>Автоматически отслеживать цену с сайта</span>
+                    </label>
+                </div>
+                <div class="help-text">Если отмечено, цена будет автоматически обновляться с указанного сайта</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="price">Цена (₽)</label>
+                <div class="price-input-group">
+                    <input type="number" id="price" th:field="*{price}" step="0.01" min="0" placeholder="0.00">
+                    <button type="button" id="fetchPriceBtn" class="btn btn-secondary" onclick="fetchPriceFromSite()" style="display: none; margin-left: 10px;">
+                        🔄 Получить цену с сайта
+                    </button>
+                </div>
+                <div id="priceStatus" class="price-status"></div>
+                <div th:if="${item.discountAvailable}" class="discount-info">
+                    <span class="discount-badge" th:text="|Скидка ${item.discountPercentage}%|"></span>
+                    <span class="original-price-info">
+                        Оригинальная цена: <span th:text="|${#numbers.formatDecimal(item.originalPrice, 0, 2)} Rub|"></span>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Категория</label>
+                <select id="category" th:field="*{category}">
+                    <option value="">Выберите категорию</option>
+                    <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}">Категория</option>
+                    <option value="Новая категория">+ Новая категория</option>
+                </select>
+            </div>
+            
+            <div class="form-group" th:if="${groups}">
+                <label for="groupId">Группа</label>
+                <select id="groupId" th:field="*{groupId}">
+                    <option value="">Без группы</option>
+                    <option th:each="group : ${groups}" th:value="${group.id}" th:text="${group.name}">Группа</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Приоритет</label>
+                <div class="priority-selector">
+                    <div class="priority-option priority-1">
+                        <input type="radio" id="priority1" th:field="*{priority}" value="1">
+                        <label for="priority1">
+                            🔥 Высокий<br>
+                            <small>Очень хочу!</small>
+                        </label>
+                    </div>
+                    <div class="priority-option priority-2">
+                        <input type="radio" id="priority2" th:field="*{priority}" value="2">
+                        <label for="priority2">
+                            ⭐ Средний<br>
+                            <small>Хорошо бы иметь</small>
+                        </label>
+                    </div>
+                    <div class="priority-option priority-3">
+                        <input type="radio" id="priority3" th:field="*{priority}" value="3">
+                        <label for="priority3">
+                            💭 Низкий<br>
+                            <small>Подумать</small>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <a href="/wishlist" class="btn btn-secondary">Отмена</a>
+                <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        document.getElementById('category').addEventListener('change', function() {
+            if (this.value === 'Новая категория') {
+                const newCategory = prompt('Введите название новой категории:');
+                if (newCategory && newCategory.trim()) {
+                    const option = document.createElement('option');
+                    option.value = newCategory.trim();
+                    option.text = newCategory.trim();
+                    option.selected = true;
+                    this.add(option);
+                    this.value = newCategory.trim();
+                } else {
+                    this.value = '';
+                }
+            }
+        });
+        
+        function previewImage() {
+            const imageUrl = document.getElementById('imageUrl').value;
+            const preview = document.getElementById('imagePreview');
+            
+            if (imageUrl && imageUrl.startsWith('http')) {
+                preview.innerHTML = `<img id="previewImg" src="${imageUrl}" style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd;" alt="Предпросмотр" onerror="this.parentElement.style.display='none'; alert('Не удалось загрузить изображение. Проверьте URL.');">`;
+                preview.style.display = 'block';
+            } else if (!imageUrl) {
+                preview.style.display = 'none';
+            }
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            checkPriceAvailability();
+            togglePriceInput();
+        });
+        
+        function checkPriceAvailability() {
+            const link = document.getElementById('link').value;
+            const trackingGroup = document.getElementById('priceTrackingGroup');
+            
+            if (link && link.startsWith('http')) {
+                trackingGroup.style.display = 'block';
+            } else {
+                trackingGroup.style.display = 'none';
+                document.getElementById('autoPriceTracking').checked = false;
+                togglePriceInput();
+            }
+        }
+        
+        function togglePriceInput() {
+            const autoTracking = document.getElementById('autoPriceTracking').checked;
+            const priceInput = document.getElementById('price');
+            const fetchBtn = document.getElementById('fetchPriceBtn');
+            
+            if (autoTracking) {
+                priceInput.readOnly = true;
+                priceInput.style.backgroundColor = '#f8f9fa';
+                fetchBtn.style.display = 'inline-block';
+            } else {
+                priceInput.readOnly = false;
+                priceInput.style.backgroundColor = 'white';
+                fetchBtn.style.display = 'none';
+            }
+        }
+        
+        function fetchPriceFromSite() {
+            const link = document.getElementById('link').value;
+            const priceStatus = document.getElementById('priceStatus');
+            const priceInput = document.getElementById('price');
+            
+            if (!link) {
+                showPriceStatus('Сначала введите ссылку на товар', 'error');
+                return;
+            }
+            
+            priceStatus.style.display = 'block';
+            priceStatus.className = 'price-status info';
+            priceStatus.textContent = '🔄 Получение цены с сайта...';
+            
+            fetch('/api/parse-price', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: link })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    priceInput.value = data.price.toFixed(2);
+                    showPriceStatus(`✅ Цена успешно получена: ${data.price.toFixed(2)} ₽`, 'success');
+                } else {
+                    showPriceStatus(`❌ Ошибка: ${data.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                showPriceStatus('❌ Ошибка соединения. Попробуйте еще раз.', 'error');
+            });
+        }
+        
+        function showPriceStatus(message, type) {
+            const priceStatus = document.getElementById('priceStatus');
+            priceStatus.style.display = 'block';
+            priceStatus.className = `price-status ${type}`;
+            priceStatus.textContent = message;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    priceStatus.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

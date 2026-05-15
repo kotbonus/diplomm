@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отладка сессии</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .debug-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .status.authenticated {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status.not-authenticated {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .btn {
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Отладка сессии</h1>
+        
+        <div class="status" th:classappend="${session.currentUser != null} ? 'authenticated' : 'not-authenticated'">
+            <span th:if="${session.currentUser != null}">✅ Пользователь авторизован</span>
+            <span th:if="${session.currentUser == null}">🔒 Пользователь не авторизован</span>
+        </div>
+        
+        <div class="debug-info">
+            <h3>Информация о пользователе в сессии:</h3>
+            <div th:if="${session.currentUser != null}">
+                <p><strong>Email:</strong> <span th:text="${session.currentUser.email}">-</span></p>
+                <p><strong>Имя:</strong> <span th:text="${session.currentUser.firstName}">-</span></p>
+                <p><strong>Фамилия:</strong> <span th:text="${session.currentUser.lastName}">-</span></p>
+            </div>
+            <div th:if="${session.currentUser == null}">
+                <p>Пользователь отсутствует в сессии</p>
+            </div>
+        </div>
+        
+        <div class="debug-info">
+            <h3>ID сессии:</h3>
+            <p th:text="${session.id}">-</p>
+        </div>
+        
+        <div class="debug-info">
+            <h3>Атрибуты сессии:</h3>
+            <ul>
+                <li th:each="attr : ${session.attributeNames}">
+                    <strong th:text="${attr}">-</strong>: <span th:text="${session.getAttribute(attr)}">-</span>
+                </li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <a href="/" class="btn">🏠 Главная</a>
+            <a href="/wishlist" class="btn">🎁 Wishlist</a>
+            <a href="/auth/login" class="btn">🔐 Вход</a>
+            <a href="/auth/logout" class="btn">🚪 Выход</a>
+        </div>
+    </div>
+</body>
+</html>

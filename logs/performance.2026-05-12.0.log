@@ -1,0 +1,14 @@
+2026-05-10 13:05:11.225 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=5383428600
+2026-05-10 13:06:57.856 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=1393090600
+2026-05-10 13:07:02.190 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=279361400
+2026-05-10 13:07:04.041 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=286705400
+2026-05-10 13:07:04.580 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=369927900
+2026-05-10 13:07:05.085 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=420981900
+2026-05-10 13:47:48.513 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=1206798700
+2026-05-10 15:54:01.271 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=2325921900
+2026-05-12 14:45:49.646 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=2688344100
+2026-05-12 15:23:08.388 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=1974147700
+2026-05-12 15:23:43.673 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=1098854900
+2026-05-12 15:23:56.487 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=497027600
+2026-05-12 15:26:21.479 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=1852041300
+2026-05-12 15:29:16.363 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=903651500

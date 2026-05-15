@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Редактировать профиль</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        h1 {
+            color: #667eea;
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="file"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        input[readonly] {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        .info-text {
+            color: #666;
+            font-size: 0.9em;
+            font-style: italic;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>✏️ Редактировать профиль</h1>
+        </header>
+        
+        <form th:action="@{/profile/edit}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" th:value="${user.email}" readonly>
+                <div class="info-text">Email нельзя изменить после регистрации</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="firstName">Имя:</label>
+                <input type="text" id="firstName" name="firstName" th:value="${user.firstName}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="lastName">Фамилия:</label>
+                <input type="text" id="lastName" name="lastName" th:value="${user.lastName}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="about">О себе:</label>
+                <textarea id="about" name="about" th:text="${user.about}" placeholder="Расскажите о себе..."></textarea>
+                <div class="info-text">Напишите несколько слов о себе, ваших интересах или увлечениях</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="avatar">Аватар:</label>
+                <input type="file" id="avatar" name="avatar" accept="image/*">
+                <div class="info-text">Выберите изображение для аватара (JPG, PNG, GIF)</div>
+            </div>
+            
+            <div class="actions">
+                <button type="submit" class="btn">💾 Сохранить изменения</button>
+                <a th:href="@{/profile}" class="btn btn-secondary">❌ Отмена</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

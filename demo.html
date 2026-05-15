@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Демонстрация функциональности</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        h1 {
+            color: #667eea;
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8f9ff;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature-card {
+            background-color: #f8f9ff;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+            background-color: #f0f2ff;
+        }
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        .feature-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .feature-description {
+            color: #666;
+            line-height: 1.5;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .status.authenticated {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.not-authenticated {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .toggle-btn {
+            background-color: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+        .toggle-btn:hover {
+            background-color: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎁 Демонстрация функциональности Wishlist</h1>
+            <p>Проверка работы карточек функций с проверкой авторизации</p>
+        </header>
+        
+        <div class="demo-section">
+            <h3>Статус авторизации:</h3>
+            <div id="authStatus" class="status not-authenticated">
+                🔒 Пользователь не авторизован
+            </div>
+            <button class="toggle-btn" onclick="toggleAuthStatus()">Переключить статус авторизации</button>
+        </div>
+        
+        <h3>Что вы можете сделать:</h3>
+        <div class="features">
+            <div class="feature-card" onclick="handleFeatureClick()">
+                <div class="feature-icon">➕</div>
+                <div class="feature-title">Добавлять желания</div>
+                <div class="feature-description">Создавайте список всего, что хотите приобрести или получить</div>
+            </div>
+            <div class="feature-card" onclick="handleFeatureClick()">
+                <div class="feature-icon">📝</div>
+                <div class="feature-title">Организовывать</div>
+                <div class="feature-description">Сортируйте по категориям и приоритетам</div>
+            </div>
+            <div class="feature-card" onclick="handleFeatureClick()">
+                <div class="feature-icon">✅</div>
+                <div class="feature-title">Отслеживать</div>
+                <div class="feature-description">Отмечайте исполненные желания</div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>Результат последнего клика:</h3>
+            <div id="result" style="padding: 10px; background-color: #f8f9fa; border-radius: 8px; min-height: 50px;">
+                Нажмите на любую карточку функции для проверки
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let isLoggedIn = false;
+        
+        function toggleAuthStatus() {
+            isLoggedIn = !isLoggedIn;
+            const statusDiv = document.getElementById('authStatus');
+            
+            if (isLoggedIn) {
+                statusDiv.className = 'status authenticated';
+                statusDiv.innerHTML = '✅ Пользователь авторизован';
+            } else {
+                statusDiv.className = 'status not-authenticated';
+                statusDiv.innerHTML = '🔒 Пользователь не авторизован';
+            }
+        }
+        
+        function handleFeatureClick() {
+            const resultDiv = document.getElementById('result');
+            
+            if (isLoggedIn) {
+                resultDiv.innerHTML = '🚀 <strong>Перенаправление в Wishlist</strong><br>Пользователь авторизован, переходим к списку желаний...';
+                resultDiv.style.backgroundColor = '#d4edda';
+                resultDiv.style.color = '#155724';
+                
+                // Имитация перенаправления
+                setTimeout(() => {
+                    resultDiv.innerHTML += '<br><em>В реальном приложении вы бы были перенаправлены на /wishlist</em>';
+                }, 1000);
+            } else {
+                resultDiv.innerHTML = '🔐 <strong>Перенаправление на авторизацию</strong><br>Пользователь не авторизован, переходим на страницу входа...';
+                resultDiv.style.backgroundColor = '#f8d7da';
+                resultDiv.style.color = '#721c24';
+                
+                // Имитация перенаправления
+                setTimeout(() => {
+                    resultDiv.innerHTML += '<br><em>После входа вы попадете сразу в /wishlist</em>';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

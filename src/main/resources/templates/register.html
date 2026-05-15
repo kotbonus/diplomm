@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Регистрация</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .register-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #667eea;
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+        .logo p {
+            color: #666;
+            margin: 5px 0 0 0;
+            font-size: 0.9em;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        .password-container {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 18px;
+            padding: 5px;
+            user-select: none;
+        }
+        .password-toggle:hover {
+            color: #667eea;
+        }
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+        .password-hint {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="logo">
+            <h1>🎁 Мои Желания!</h1>
+            <p>Создание нового аккаунта</p>
+        </div>
+        
+        <div th:if="${error}" class="alert" th:text="${error}"></div>
+        
+        <form th:action="@{/auth/register}" method="post">
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required placeholder="Ваш@email.com">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">Имя:</label>
+                    <input type="text" id="firstName" name="firstName" required placeholder="Иван">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Фамилия:</label>
+                    <input type="text" id="lastName" name="lastName" required placeholder="Иванов">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required placeholder="Минимум 6 символов">
+                    <button type="button" class="password-toggle" onclick="togglePassword('password', this)">
+                        👁️
+                    </button>
+                </div>
+                <div class="password-hint">Пароль должен содержать минимум 6 символов</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Подтвердите пароль:</label>
+                <div class="password-container">
+                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Введите пароль еще раз">
+                    <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword', this)">
+                        👁️
+                    </button>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn">Зарегистрироваться</button>
+        </form>
+        
+        <div class="login-link">
+            Уже есть аккаунт? <a th:href="@{/auth/login}">Войти</a>
+        </div>
+        
+        <div class="back-link">
+            <a th:href="@{/}">← На главную</a>
+        </div>
+    </div>
+    
+    <script>
+        function togglePassword(inputId, button) {
+            const passwordInput = document.getElementById(inputId);
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+    </script>
+</body>
+</html>

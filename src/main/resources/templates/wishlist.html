@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Мой Wishlist</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        h1 {
+            color: #667eea;
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .category-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .group-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .filters {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .category-filter select {
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .wishlist-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        .item-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+        }
+        .item-image-placeholder {
+            width: 100%;
+            height: 200px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+            border: 2px dashed #dee2e6;
+        }
+        .wishlist-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+        .wishlist-item.purchased {
+            opacity: 0.7;
+            background-color: #f8f9fa;
+        }
+        .wishlist-item.purchased::after {
+            content: '✓ Куплено';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .item-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+            flex: 1;
+        }
+        .item-price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+            white-space: nowrap;
+        }
+        .item-category {
+            display: inline-block;
+            background-color: #e9ecef;
+            color: #495057;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .item-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .item-link {
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 15px;
+            display: inline-block;
+            word-break: break-all;
+        }
+        .item-link:hover {
+            text-decoration: underline;
+        }
+        .item-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 11px;
+            white-space: nowrap;
+            min-width: 0;
+            flex-shrink: 0;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            color: #212529;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        .priority-indicator {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+        .priority-1 { background-color: #dc3545; }
+        .priority-2 { background-color: #ffc107; }
+        .priority-3 { background-color: #28a745; }
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 1;
+            animation: pulse 2s infinite;
+        }
+        .price-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+        .original-price {
+            font-size: 0.9em;
+            color: #999;
+            text-decoration: line-through;
+        }
+        .discount-percentage {
+            font-size: 0.8em;
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .auto-tracking-indicator {
+            font-size: 0.8em;
+            color: #28a745;
+            margin-top: 5px;
+        }
+        .update-prices-btn {
+            background-color: #17a2b8;
+            color: white;
+            margin-left: 10px;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+        .btn-info:hover {
+            background-color: #138496;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            max-width: 300px;
+            animation: slideIn 0.3s ease;
+        }
+        .notification.success {
+            background-color: #28a745;
+        }
+        .notification.info {
+            background-color: #17a2b8;
+        }
+        .notification.error {
+            background-color: #dc3545;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .purchased {
+            opacity: 0.6;
+            background-color: #f8f9fa;
+        }
+        .purchased .item-title {
+            text-decoration: line-through;
+        }
+        .reserved {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            border: 2px solid #ffc107;
+            position: relative;
+        }
+        .reserved::before {
+            content: "🔒 ЗАБРОНИРОВАНО";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ffc107;
+            color: #212529;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 2;
+            animation: pulse 2s infinite;
+        }
+        .reserved-by-info {
+            font-size: 0.85em;
+            color: #856404;
+            margin-top: 5px;
+            font-style: italic;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+        .empty-state h2 {
+            color: #999;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        nav {
+            margin: 20px 0;
+            text-align: center;
+        }
+        nav a {
+            margin: 0 15px;
+            text-decoration: none;
+            color: #667eea;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎁 Мои Желания!</h1>
+            <p>Управляйте своими желаниями и мечтами</p>
+        </header>
+        
+        <div th:replace="~{fragments/navigation :: navigation}"></div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(items)}">0</div>
+                <div class="stat-label">Всего желаний</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(items.?[!purchased])}">0</div>
+                <div class="stat-label">Не куплено</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" th:text="${#lists.size(items.?[purchased])}">0</div>
+                <div class="stat-label">Куплено</div>
+            </div>
+        </div>
+        
+        <div class="header-actions">
+            <div class="filters">
+                <div class="category-filter">
+                    <label for="categoryFilter">Фильтр по категории:</label>
+                    <select id="categoryFilter" onchange="filterByCategory()">
+                        <option value="">Все категории</option>
+                        <option th:each="cat : ${categories}" 
+                                th:value="${cat}" 
+                                th:text="${cat}"
+                                th:selected="${cat == selectedCategory}">Категория</option>
+                    </select>
+                </div>
+                <div class="group-filter" th:if="${groups}">
+                    <label for="groupFilter">Фильтр по группе:</label>
+                    <select id="groupFilter" onchange="filterByGroup()">
+                        <option value="">Все группы</option>
+                        <option th:each="group : ${groups}" 
+                                th:value="${group.id}" 
+                                th:text="${group.name}"
+                                th:selected="${group.id == selectedGroup}">Группа</option>
+                    </select>
+                </div>
+            </div>
+            <div class="actions">
+                <a href="/wishlist/add" class="btn btn-primary">+ Добавить желание</a>
+                <a href="/groups" class="btn btn-secondary">📁 Группы</a>
+                <button class="btn update-prices-btn" onclick="updateAllPrices()">🔄 Обновить цены</button>
+            </div>
+        </div>
+        
+        <div class="wishlist-grid" th:if="${!#lists.isEmpty(items)}">
+            <div th:each="item : ${items}" 
+                 th:classappend="${item.purchased} ? 'purchased' : (${item.reserved} ? 'reserved' : '')"
+                 class="wishlist-item">
+                <div th:class="|priority-indicator priority-${item.priority}|"></div>
+                
+                <div th:if="${item.discountAvailable}" class="discount-badge" 
+                     th:text="|Скидка ${item.discountPercentage}%|">
+                    Скидка X%
+                </div>
+                
+                <!-- Изображение товара -->
+                <div th:if="${item.imageUrl}">
+                    <img th:src="${item.imageUrl}" 
+                         class="item-image" 
+                         th:alt="${item.title}"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="item-image-placeholder" style="display: none;">
+                        📷 Изображение недоступно
+                    </div>
+                </div>
+                <div th:unless="${item.imageUrl}" class="item-image-placeholder">
+                    📷 Нет изображения
+                </div>
+                
+                <div class="item-header">
+                    <h3 class="item-title" th:text="${item.title}">Название</h3>
+                    <div class="price-info">
+                        <div class="item-price" th:text="|${#numbers.formatDecimal(item.price, 0, 2)} Rub|">0 ₽</div>
+                        <div th:if="${item.discountAvailable && item.originalPrice > 0}" class="original-price" 
+                             th:text="|${#numbers.formatDecimal(item.originalPrice, 0, 2)} Rub|">
+                            0 ₽
+                        </div>
+                        <div th:if="${item.discountAvailable}" class="discount-percentage" 
+                             th:text="|-${item.discountPercentage}%|">
+                            -X%
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="item-category" th:text="${item.category}">Категория</div>
+                
+                <p class="item-description" th:text="${item.description}">Описание</p>
+                
+                <a th:if="${item.link}" 
+                   th:href="${item.link}" 
+                   target="_blank" 
+                   class="item-link">🔗 Ссылка на товар</a>
+                
+                <div th:if="${item.autoPriceTracking}" class="auto-tracking-indicator">
+                    🔄 Автообновление цены
+                </div>
+                
+                <div th:if="${item.reserved}" class="reserved-by-info">
+                    Забронировано: <span th:text="${#temporals.format(item.reservedAt, 'dd.MM.yyyy HH:mm')}">01.01.2024 12:00</span>
+                </div>
+                
+                <div class="item-actions">
+                    <button th:if="${!item.reserved && !item.purchased}" 
+                            class="btn btn-small btn-info"
+                            th:onclick="'reserveItem(' + ${item.id} + ')'">
+                        🔒 Забронировать
+                    </button>
+                    <button th:if="${item.reserved}" 
+                            class="btn btn-small btn-secondary"
+                            th:onclick="'cancelReservation(' + ${item.id} + ')'">
+                        🔓 Отменить бронь
+                    </button>
+                    <a th:href="@{/wishlist/toggle/{id}(id=${item.id})}" 
+                       th:class="${item.purchased} ? 'btn btn-small btn-warning' : 'btn btn-small btn-success'"
+                       th:text="${item.purchased} ? 'Отметить как не купленное' : 'Отметить как купленное'">
+                        Отметить
+                    </a>
+                    <a th:href="@{/wishlist/edit/{id}(id=${item.id})}" 
+                       class="btn btn-small btn-warning">✏️ Редактировать</a>
+                    <a th:href="@{/wishlist/delete/{id}(id=${item.id})}" 
+                       class="btn btn-small btn-danger"
+                       onclick="return confirm('Вы уверены, что хотите удалить это желание?')">🗑️ Удалить</a>
+                </div>
+            </div>
+        </div>
+        
+        <div th:if="${#lists.isEmpty(items)}" class="empty-state">
+            <h2>😔 У вас пока нет желаний</h2>
+            <p>Добавьте свое первое желание в список!</p>
+            <a href="/wishlist/add" class="btn btn-primary">+ Добавить первое желание</a>
+        </div>
+    </div>
+    
+    <script>
+        function filterByCategory() {
+            const category = document.getElementById('categoryFilter').value;
+            const group = document.getElementById('groupFilter')?.value || '';
+            
+            if (category || group) {
+                let url = '/wishlist?';
+                const params = [];
+                if (category) params.push('category=' + encodeURIComponent(category));
+                if (group) params.push('group=' + encodeURIComponent(group));
+                url += params.join('&');
+                window.location.href = url;
+            } else {
+                window.location.href = '/wishlist';
+            }
+        }
+        
+        function filterByGroup() {
+            const category = document.getElementById('categoryFilter').value;
+            const group = document.getElementById('groupFilter').value;
+            
+            if (category || group) {
+                let url = '/wishlist?';
+                const params = [];
+                if (category) params.push('category=' + encodeURIComponent(category));
+                if (group) params.push('group=' + encodeURIComponent(group));
+                url += params.join('&');
+                window.location.href = url;
+            } else {
+                window.location.href = '/wishlist';
+            }
+        }
+        
+        function updateAllPrices() {
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '🔄 Обновление...';
+            btn.disabled = true;
+            
+            fetch('/api/update-prices', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    if (data.updatedCount > 0) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                } else {
+                    showNotification('Ошибка при обновлении цен', 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Ошибка соединения', 'error');
+            })
+            .finally(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            });
+        }
+        
+        function reserveItem(itemId) {
+            fetch('/api/reserve-item', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `itemId=${itemId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Ошибка соединения', 'error');
+            });
+        }
+        
+        function cancelReservation(itemId) {
+            fetch('/api/cancel-reservation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `itemId=${itemId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showNotification(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showNotification('Ошибка соединения', 'error');
+            });
+        }
+        
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

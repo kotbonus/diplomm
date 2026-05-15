@@ -1,0 +1,2 @@
+2026-05-15 13:34:03.060 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://dvamyacha.ru/***, price=6540.0, duration_ms=1964585100
+2026-05-15 13:41:44.055 INFO  PERFORMANCE - PRICE_PARSING_SUCCESS: url=https://bestmebelshop.ru/***, price=159.0, duration_ms=675376300

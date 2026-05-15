@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление резервными копиями</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-database"></i> Управление резервными копиями</h2>
+                    <a href="/admin" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Назад к админке
+                    </a>
+                </div>
+
+                <!-- Панель управления -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5><i class="fas fa-cogs"></i> Операции с резервными копиями</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <button id="createBackupBtn" class="btn btn-primary w-100">
+                                    <i class="fas fa-plus-circle"></i> Создать бэкап
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <button id="refreshListBtn" class="btn btn-info w-100">
+                                    <i class="fas fa-sync-alt"></i> Обновить список
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <button id="downloadKeyBtn" class="btn btn-warning w-100">
+                                    <i class="fas fa-key"></i> Скачать ключи
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Список резервных копий -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-list"></i> Доступные резервные копии</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="loadingSpinner" class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Загрузка...</span>
+                            </div>
+                        </div>
+
+                        <div id="backupList" class="d-none">
+                            <div id="emptyMessage" class="alert alert-info d-none">
+                                <i class="fas fa-info-circle"></i> Резервные копии не найдены
+                            </div>
+
+                            <div id="backupTableContainer">
+                                <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Имя файла</th>
+                                        <th>Дата создания</th>
+                                        <th>Размер</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="backupTableBody">
+                                    <!-- Данные будут загружены через JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для восстановления -->
+    <div class="modal fade" id="restoreModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение восстановления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Внимание!</strong> Восстановление из резервной копии приведет к потере всех текущих данных.</p>
+                    <p>Вы уверены, что хотите восстановить базу данных из файла: <strong id="restoreFileName"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" id="confirmRestoreBtn" class="btn btn-danger">
+                        <i class="fas fa-database"></i> Восстановить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для удаления -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Подтверждение удаления</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Вы уверены, что хотите удалить резервную копию: <strong id="deleteFileName"></strong>?</p>
+                    <p class="text-danger">Это действие необратимо!</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" id="confirmDeleteBtn" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Удалить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Всплывающие уведомления -->
+    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <div id="notificationToast" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto" id="notificationTitle">Уведомление</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="notificationMessage">
+                Сообщение
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let restoreModal, deleteModal, notificationToast;
+        let currentRestoreFile = '';
+        let currentDeleteFile = '';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            restoreModal = new bootstrap.Modal(document.getElementById('restoreModal'));
+            deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            notificationToast = new bootstrap.Toast(document.getElementById('notificationToast'));
+
+            // Загрузка списка бэкапов при загрузке страницы
+            loadBackupList();
+
+            // Обработчики событий
+            document.getElementById('createBackupBtn').addEventListener('click', createBackup);
+            document.getElementById('refreshListBtn').addEventListener('click', loadBackupList);
+            document.getElementById('confirmRestoreBtn').addEventListener('click', confirmRestore);
+            document.getElementById('confirmDeleteBtn').addEventListener('click', confirmDelete);
+        });
+
+        function loadBackupList() {
+            showLoading(true);
+            
+            fetch('/admin/backup/list')
+                .then(response => response.json())
+                .then(data => {
+                    showLoading(false);
+                    if (data.success) {
+                        displayBackupList(data.backups);
+                    } else {
+                        showNotification('Ошибка', data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    showLoading(false);
+                    showNotification('Ошибка', 'Не удалось загрузить список бэкапов', 'danger');
+                    console.error('Error:', error);
+                });
+        }
+
+        function displayBackupList(backups) {
+            const backupList = document.getElementById('backupList');
+            const emptyMessage = document.getElementById('emptyMessage');
+            const tableContainer = document.getElementById('backupTableContainer');
+            const tableBody = document.getElementById('backupTableBody');
+
+            backupList.classList.remove('d-none');
+
+            if (backups.length === 0) {
+                emptyMessage.classList.remove('d-none');
+                tableContainer.classList.add('d-none');
+            } else {
+                emptyMessage.classList.add('d-none');
+                tableContainer.classList.remove('d-none');
+
+                tableBody.innerHTML = '';
+                backups.forEach(backup => {
+                    const row = createBackupRow(backup);
+                    tableBody.appendChild(row);
+                });
+            }
+        }
+
+        function createBackupRow(backup) {
+            const row = document.createElement('tr');
+            
+            // Извлекаем дату из имени файла
+            const dateMatch = backup.match(/wishlist_backup_(\d{8}_\d{6})\.sql\.enc/);
+            const dateStr = dateMatch ? dateMatch[1] : '';
+            const formattedDate = formatDate(dateStr);
+
+            row.innerHTML = `
+                <td><i class="fas fa-file-archive"></i> ${backup}</td>
+                <td>${formattedDate}</td>
+                <td>-</td>
+                <td>
+                    <button class="btn btn-sm btn-success" onclick="showRestoreModal('${backup}')" title="Восстановить">
+                        <i class="fas fa-database"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="showDeleteModal('${backup}')" title="Удалить">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            
+            return row;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            
+            try {
+                const date = new Date(
+                    dateStr.substring(0, 4) + '-' +
+                    dateStr.substring(4, 6) + '-' +
+                    dateStr.substring(6, 8) + ' ' +
+                    dateStr.substring(9, 11) + ':' +
+                    dateStr.substring(11, 13) + ':' +
+                    dateStr.substring(13, 15)
+                );
+                return date.toLocaleString('ru-RU');
+            } catch (e) {
+                return dateStr;
+            }
+        }
+
+        function createBackup() {
+            const btn = document.getElementById('createBackupBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Создание...';
+
+            fetch('/admin/backup/create', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-plus-circle"></i> Создать бэкап';
+                
+                if (data.success) {
+                    showNotification('Успех', 'Резервная копия успешно создана: ' + data.fileName, 'success');
+                    loadBackupList();
+                } else {
+                    showNotification('Ошибка', data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-plus-circle"></i> Создать бэкап';
+                showNotification('Ошибка', 'Не удалось создать резервную копию', 'danger');
+                console.error('Error:', error);
+            });
+        }
+
+        function showRestoreModal(fileName) {
+            currentRestoreFile = fileName;
+            document.getElementById('restoreFileName').textContent = fileName;
+            restoreModal.show();
+        }
+
+        function confirmRestore() {
+            const btn = document.getElementById('confirmRestoreBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Восстановление...';
+
+            fetch(`/admin/backup/restore/${encodeURIComponent(currentRestoreFile)}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-database"></i> Восстановить';
+                restoreModal.hide();
+                
+                if (data.success) {
+                    showNotification('Успех', 'База данных успешно восстановлена', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showNotification('Ошибка', data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-database"></i> Восстановить';
+                restoreModal.hide();
+                showNotification('Ошибка', 'Не удалось восстановить базу данных', 'danger');
+                console.error('Error:', error);
+            });
+        }
+
+        function showDeleteModal(fileName) {
+            currentDeleteFile = fileName;
+            document.getElementById('deleteFileName').textContent = fileName;
+            deleteModal.show();
+        }
+
+        function confirmDelete() {
+            const btn = document.getElementById('confirmDeleteBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Удаление...';
+
+            fetch(`/admin/backup/delete/${encodeURIComponent(currentDeleteFile)}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-trash"></i> Удалить';
+                deleteModal.hide();
+                
+                if (data.success) {
+                    showNotification('Успех', 'Резервная копия успешно удалена', 'success');
+                    loadBackupList();
+                } else {
+                    showNotification('Ошибка', data.message, 'danger');
+                }
+            })
+            .catch(error => {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-trash"></i> Удалить';
+                deleteModal.hide();
+                showNotification('Ошибка', 'Не удалось удалить резервную копию', 'danger');
+                console.error('Error:', error);
+            });
+        }
+
+        function showLoading(show) {
+            const spinner = document.getElementById('loadingSpinner');
+            const backupList = document.getElementById('backupList');
+            
+            if (show) {
+                spinner.classList.remove('d-none');
+                backupList.classList.add('d-none');
+            } else {
+                spinner.classList.add('d-none');
+            }
+        }
+
+        function showNotification(title, message, type = 'info') {
+            const toastElement = document.getElementById('notificationToast');
+            const titleElement = document.getElementById('notificationTitle');
+            const messageElement = document.getElementById('notificationMessage');
+            
+            titleElement.textContent = title;
+            messageElement.textContent = message;
+            
+            toastElement.className = 'toast';
+            toastElement.classList.add(`bg-${type}`, 'text-white');
+            
+            notificationToast.show();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+groups:
+  - name: wishlist-app-alerts
+    rules:
+      # Алерты для доступности приложения
+      - alert: ApplicationDown
+        expr: up{job="wishlist-app"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Приложение недоступно"
+          description: "Приложение wishlist-app не отвечает более 1 минуты"
+
+      # Алерты для HTTP ошибок
+      - alert: HighErrorRate
+        expr: rate(http_server_requests_seconds_count{status=~"5.."}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокий уровень HTTP ошибок"
+          description: "Более 10% запросов возвращают 5xx ошибки"
+
+      # Алерты для времени ответа
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_server_requests_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокое время ответа"
+          description: "95th percentile времени ответа превышает 2 секунды"
+
+      # Алерты для парсинга цен
+      - alert: PriceParsingHighErrorRate
+        expr: rate(price_parsing_errors_total[5m]) / rate(price_parsing_attempts_total[5m]) > 0.5
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокий уровень ошибок парсинга цен"
+          description: "Более 50% попыток парсинга цен заканчиваются ошибкой"
+
+      # Алерты для безопасности
+      - alert: HighAuthenticationFailures
+        expr: rate(security_auth_failures_total[5m]) > 5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокий уровень неудачных попыток аутентификации"
+          description: "Более 5 неудачных попыток входа в минуту"
+
+      # Алерты для системных ресурсов
+      - alert: HighMemoryUsage
+        expr: (process_resident_memory_bytes / 1024 / 1024) > 512
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокое использование памяти"
+          description: "Приложение использует более 512MB памяти"
+
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокая загрузка CPU"
+          description: "Приложение использует более 80% CPU"
+
+  - name: system-alerts
+    rules:
+      # Алерты для системных метрик
+      - alert: NodeDown
+        expr: up{job="node-exporter"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Сервер недоступен"
+          description: "Node exporter не отвечает"
+
+      - alert: HighDiskUsage
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Мало места на диске"
+          description: "Менее 10% свободного места на диске"
+
+      - alert: HighSystemLoad
+        expr: node_load1 > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Высокая нагрузка на систему"
+          description: "Load average превышает 2"
