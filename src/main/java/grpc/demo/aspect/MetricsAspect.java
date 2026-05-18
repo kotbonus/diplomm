@@ -20,7 +20,6 @@ public class MetricsAspect {
     @Autowired
     private MeterRegistry meterRegistry;
 
-    // Таймер для замера времени выполнения методовв
     @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.GetMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
@@ -34,7 +33,7 @@ public class MetricsAspect {
         try {
             Object result = joinPoint.proceed();
             
-            // Успешное выполнение
+            // Успех выполнения
             Counter.builder("http.requests.success")
                     .tag("method", methodName)
                     .tag("class", className)
@@ -44,7 +43,7 @@ public class MetricsAspect {
             
             return result;
         } catch (Exception e) {
-            // Ошибка выполнения
+            // Провал выполнения
             Counter.builder("http.requests.error")
                     .tag("method", methodName)
                     .tag("class", className)

@@ -61,7 +61,7 @@ public class DataInitializer {
                 test.setLastLoginAt(LocalDateTime.now());
                 userRepository.save(test);
                 
-                // Ваши пользователи
+                // Пользователи
                 User kotbonus = new User();
                 kotbonus.setEmail("kotbonus2233@gmail.com");
                 kotbonus.setFirstName("Kot");

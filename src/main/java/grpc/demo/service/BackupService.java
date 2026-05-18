@@ -243,7 +243,7 @@ public class BackupService {
     }
     
     /**
-     * Получает ключ шифрования для бэкапов
+     * Получам ключ шифрования для бэкапов
      */
     private String getBackupEncryptionKey() {
         if (backupEncryptionKey != null && !backupEncryptionKey.isEmpty()) {

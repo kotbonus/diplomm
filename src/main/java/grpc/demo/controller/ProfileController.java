@@ -109,7 +109,7 @@ public class ProfileController {
             }
         }
         
-        // Сохраняем изменения в базе данных
+        // Сохраняем изменения в бд
         userService.updateUser(currentUser);
         
         session.setAttribute("currentUser", currentUser);

@@ -20,7 +20,7 @@ public class JasyptConfig {
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
         
-        // Получаем пароль из системного свойства или переменной окружения
+        // Получаем пароль
         String password = System.getProperty("jasypt.encryptor.password");
         if (password == null) {
             password = System.getenv("JASYPT_ENCRYPTOR_PASSWORD");

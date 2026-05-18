@@ -81,7 +81,7 @@ public class PriceParsingService {
         logger.info("Начало парсинга цены для URL: {}", maskUrl(url));
         
         try {
-            // Особая обработка для М.Видео - используем API
+
             if (url.contains("mvideo.ru")) {
                 logger.debug("Используем API для М.Видео");
                 return parseMvideoPriceFromApi(url);
