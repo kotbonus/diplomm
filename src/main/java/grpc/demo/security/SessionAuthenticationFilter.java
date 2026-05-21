@@ -39,8 +39,7 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
                 
                 logger.debug("Пользователь аутентифицирован через сессию");
-                
-                // Добавляем информацию в MDC для логирования
+
                 MDC.put("authenticated", "true");
                 
             } catch (Exception e) {
@@ -58,7 +57,7 @@ public class SessionAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        // Не фильтровать API запросы (они обрабатываются JWT фильтром)
+
         return path.startsWith("/api/") || 
                path.startsWith("/auth/") || 
                path.startsWith("/css/") || 

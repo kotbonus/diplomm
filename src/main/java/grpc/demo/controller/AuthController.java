@@ -48,7 +48,6 @@ public class AuthController {
 
     @GetMapping("/login")
     public String showLoginForm(Model model, HttpSession session) {
-        // Если пользователь уже авторизован, перенаправляем в вишлист
         if (session.getAttribute("currentUser") != null) {
             return "redirect:/wishlist";
         }
@@ -63,7 +62,6 @@ public class AuthController {
                        HttpSession session,
                        RedirectAttributes redirectAttributes) {
         try {
-            // Очищаем и валидируем входные данные
             String cleanEmail = XssProtectionUtil.validateEmail(email);
             String cleanPassword = XssProtectionUtil.cleanAndValidate(password, 50);
             
@@ -71,15 +69,12 @@ public class AuthController {
                     .orElseThrow(() -> new IllegalArgumentException("Неверный email или пароль"));
             
             userService.updateUserLastLogin(user.getId());
-            
-            // Генерируем JWT токен
+
             String token = jwtUtil.generateToken(cleanEmail, user.getId(), user.getPublicId());
-            
-            // Сохраняем токен в сессии для backward compatibility с шаблонами
+
             session.setAttribute("currentUser", user);
             session.setAttribute("jwtToken", token);
-            
-            // Отладка
+
             System.out.println("Пользователь вошел: " + user.getEmail());
             System.out.println("Сессия ID: " + session.getId());
             System.out.println("JWT токен сгенерирован");
@@ -142,7 +137,6 @@ public class AuthController {
                           @RequestParam String lastName,
                           RedirectAttributes redirectAttributes) {
         try {
-            // Очищаем и валидируем входные данные
             String cleanEmail = XssProtectionUtil.validateEmail(email);
             String cleanPassword = XssProtectionUtil.cleanAndValidate(password, 50);
             String cleanConfirmPassword = XssProtectionUtil.cleanAndValidate(confirmPassword, 50);
@@ -193,19 +187,16 @@ public class AuthController {
             Optional<User> userOpt = userService.findByEmail(email);
             if (userOpt.isPresent()) {
                 User user = userOpt.get();
-                
-                // Генерируем токен сброса пароля
+
                 String resetToken = UUID.randomUUID().toString();
                 user.setResetToken(resetToken);
                 user.setResetTokenExpiry(LocalDateTime.now().plusHours(1)); // Токен действителен ЛИШЬ 1 час
                 userService.updateUser(user);
-                
-                // Отправляем email с ссылкой для сброса пароля
+
                 emailService.sendPasswordResetEmail(email, resetToken);
                 
                 redirectAttributes.addFlashAttribute("success", "Инструкции по восстановлению пароля отправлены на ваш email");
             } else {
-                // Не сообщаем пользователю, что email не найден (безопасность)
                 redirectAttributes.addFlashAttribute("success", "Если указанный email существует, инструкции по восстановлению пароля будут отправлены");
             }
             
@@ -252,8 +243,7 @@ public class AuthController {
             if (userOpt.isPresent() && userOpt.get().getResetTokenExpiry().isAfter(LocalDateTime.now())) {
                 User user = userOpt.get();
                 userService.updatePassword(user.getId(), password);
-                
-                // Очищаем токен сброса пароля
+
                 user.setResetToken(null);
                 user.setResetTokenExpiry(null);
                 userService.updateUser(user);
@@ -286,8 +276,7 @@ public class AuthController {
             return "Ошибка: " + e.getMessage();
         }
     }
-    
-    // Вложенный класс для API запроса логина
+
     public static class LoginRequest {
         private String email;
         private String password;

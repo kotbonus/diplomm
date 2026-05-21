@@ -62,7 +62,7 @@ public class WebController {
     @GetMapping("/wishlist")
     public String wishlist(@RequestParam(name = "category", required = false) String category,
                           Model model, HttpSession session, RedirectAttributes redirectAttributes) {
-        // Отладочная информация
+
         System.out.println("Запрос к /wishlist");
         System.out.println("Сессия ID: " + session.getId());
         System.out.println("Пользователь в сессии: " + session.getAttribute("currentUser"));
@@ -110,8 +110,7 @@ public class WebController {
             redirectAttributes.addFlashAttribute("error", "Для добавления желаний необходимо войти в систему");
             return "redirect:/auth/login";
         }
-        
-        // Получаем ID текущего пользователя из сессии
+
         grpc.demo.model.User currentUser = (grpc.demo.model.User) session.getAttribute("currentUser");
         item.setUserId(currentUser.getId());
         

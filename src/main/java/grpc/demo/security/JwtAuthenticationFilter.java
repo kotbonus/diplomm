@@ -38,13 +38,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = null;
         String jwtToken = null;
 
-        // JWT Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwtToken);
-                
-                // Добавляем информацию о пользователе в MDC для логирования
+
                 if (username != null) {
                     MDC.put("username", username);
                     Long userId = jwtUtil.extractUserId(jwtToken);
@@ -60,18 +58,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             logger.debug("JWT Token не начинается с Bearer String");
         }
 
-        // Валидация токена
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-            // Если токен валиден, настраиваем Spring Security для ручной установки аутентификации
             if (jwtUtil.validateToken(jwtToken, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = 
                     new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                
-                // После установки аутентификации в контексте, указываем, что текущий пользователь аутентифицирован
+
                 SecurityContextHolder.getContext().setAuthentication(authToken);
                 
                 logger.info("Пользователь успешно аутентифицирован через JWT: {}", username);

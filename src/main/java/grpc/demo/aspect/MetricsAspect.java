@@ -33,7 +33,7 @@ public class MetricsAspect {
         try {
             Object result = joinPoint.proceed();
             
-            // Успех выполнения
+
             Counter.builder("http.requests.success")
                     .tag("method", methodName)
                     .tag("class", className)
@@ -43,7 +43,7 @@ public class MetricsAspect {
             
             return result;
         } catch (Exception e) {
-            // Провал выполнения
+
             Counter.builder("http.requests.error")
                     .tag("method", methodName)
                     .tag("class", className)
@@ -62,7 +62,7 @@ public class MetricsAspect {
         }
     }
 
-    // Метрики для сервисов
+
     @Around("execution(* grpc.demo.service.*.*(..))")
     public Object logServiceMethodTime(ProceedingJoinPoint joinPoint) throws Throwable {
         String methodName = joinPoint.getSignature().getName();

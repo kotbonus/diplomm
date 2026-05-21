@@ -1,7 +1,13 @@
-2026-05-15 13:24:21.325 INFO  AUDIT - USER_REGISTERED: email=kk***@gmail.com, userId=6, publicId=6080c274
-2026-05-15 13:24:24.105 INFO  AUDIT - USER_AUTHENTICATED: email=kk***@gmail.com, userId=6, publicId=6080c274
-2026-05-15 13:47:18.744 INFO  AUDIT - USER_REGISTERED: email=**@gmail.com, userId=7, publicId=adb5e3e3
-2026-05-15 13:47:24.959 INFO  AUDIT - USER_AUTHENTICATED: email=kk***@gmail.com, userId=6, publicId=6080c274
-2026-05-15 13:48:02.542 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=7, publicId=adb5e3e3
-2026-05-15 13:48:38.805 INFO  AUDIT - USER_AUTHENTICATED: email=kk***@gmail.com, userId=6, publicId=6080c274
-2026-05-15 13:49:31.362 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=7, publicId=adb5e3e3
+2026-05-21 08:12:02.204 INFO  AUDIT - USER_REGISTERED: email=ko***@gmail.com, userId=6, publicId=af27c3e6
+2026-05-21 08:12:03.986 WARN  AUDIT - AUTHENTICATION_FAILED: email=ko***@gmail.com, reason=invalid_password
+2026-05-21 08:12:07.208 WARN  AUDIT - AUTHENTICATION_FAILED: email=ko***@gmail.com, reason=invalid_password
+2026-05-21 08:12:50.669 INFO  AUDIT - USER_REGISTERED: email=**@gmail.com, userId=7, publicId=64d62b48
+2026-05-21 08:12:53.952 WARN  AUDIT - AUTHENTICATION_FAILED: email=**@gmail.com, reason=invalid_password
+2026-05-21 08:12:59.120 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=7, publicId=64d62b48
+2026-05-21 12:47:05.065 INFO  AUDIT - USER_REGISTERED: email=kk***@gmail.com, userId=6, publicId=44cdfa91
+2026-05-21 12:47:08.620 INFO  AUDIT - USER_AUTHENTICATED: email=kk***@gmail.com, userId=6, publicId=44cdfa91
+2026-05-21 12:49:28.482 INFO  AUDIT - USER_REGISTERED: email=**@gmail.com, userId=7, publicId=74167612
+2026-05-21 12:49:31.846 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=7, publicId=74167612
+2026-05-21 12:49:48.980 INFO  AUDIT - USER_AUTHENTICATED: email=kk***@gmail.com, userId=6, publicId=44cdfa91
+2026-05-21 12:50:02.619 INFO  AUDIT - USER_AUTHENTICATED: email=**@gmail.com, userId=7, publicId=74167612
+2026-05-21 12:50:25.886 INFO  AUDIT - USER_AUTHENTICATED: email=kk***@gmail.com, userId=6, publicId=44cdfa91

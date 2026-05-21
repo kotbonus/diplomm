@@ -40,8 +40,7 @@ public class ProfileController {
 
         model.addAttribute("title", "Личный кабинет");
         model.addAttribute("user", currentUser);
-        
-        // Статистика пользователя
+
         List<WishlistItem> userItems = wishlistService.getItemsByUser(currentUser.getId());
         model.addAttribute("totalItems", userItems.size());
         model.addAttribute("purchasedItems", userItems.stream()
@@ -79,26 +78,22 @@ public class ProfileController {
         currentUser.setFirstName(firstName);
         currentUser.setLastName(lastName);
         currentUser.setAbout(about);
-        
-        // Обработка загрузки аватара
+
         if (avatar != null && !avatar.isEmpty()) {
             try {
-                // Создаем директорию для аватаров, если она не существует
+
                 Path uploadPath = Paths.get(AVATAR_DIRECTORY);
                 if (!Files.exists(uploadPath)) {
                     Files.createDirectories(uploadPath);
                 }
-                
-                // Генерируем уникальное имя файла
+
                 String originalFilename = StringUtils.cleanPath(avatar.getOriginalFilename());
                 String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
                 String newFilename = "user_" + currentUser.getId() + "_" + System.currentTimeMillis() + fileExtension;
-                
-                // Сохраняем файл
+
                 Path filePath = uploadPath.resolve(newFilename);
                 Files.copy(avatar.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                
-                // Обновляем путь к аватару в пользователе
+
                 currentUser.setAvatarPath("/" + AVATAR_DIRECTORY + "/" + newFilename);
                 
             } catch (IOException ex) {
@@ -108,8 +103,7 @@ public class ProfileController {
                 return "edit-profile";
             }
         }
-        
-        // Сохраняем изменения в бд
+
         userService.updateUser(currentUser);
         
         session.setAttribute("currentUser", currentUser);

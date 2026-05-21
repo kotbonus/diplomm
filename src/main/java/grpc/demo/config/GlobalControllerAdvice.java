@@ -19,7 +19,7 @@ public class GlobalControllerAdvice {
         User currentUser = (User) session.getAttribute("currentUser");
         
         if (currentUser != null) {
-            // Добавляем счетчик входящих заявок в друзья
+
             long pendingRequestsCount = friendshipService.countPendingRequests(currentUser.getId());
             model.addAttribute("pendingRequestsCount", pendingRequestsCount);
         } else {

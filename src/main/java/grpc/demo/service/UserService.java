@@ -58,14 +58,11 @@ public class UserService {
             user.setLastName(lastName);
             user.setCreatedAt(LocalDateTime.now());
             user.setLastLoginAt(LocalDateTime.now());
-            // publicId генерируется автоматически в конструкторе
             
             User savedUser = userRepository.save(user);
-            
-            // Увеличиваем счетчик регистраций
+
             userRegistrations.increment();
-            
-            // Записываем в аудит лог
+
             auditLogger.info("USER_REGISTERED: email={}, userId={}, publicId={}", 
                 maskEmail(email), savedUser.getId(), savedUser.getPublicId());
             
@@ -99,7 +96,6 @@ public class UserService {
             User user = userOpt.get();
             
             if (passwordEncoder.matches(password, user.getPassword())) {
-                // Успешная аутентификация
                 userLogins.increment();
                 updateUserLastLogin(user.getId());
                 
@@ -109,7 +105,6 @@ public class UserService {
                 logger.info("Пользователь успешно аутентифицирован: userId={}", user.getId());
                 return Optional.of(user);
             } else {
-                // Неверный пароль
                 logger.warn("Неверный пароль для пользователя: {}", maskEmail(email));
                 authenticationFailures.increment();
                 
@@ -178,9 +173,7 @@ public class UserService {
         }
     }
     
-    /**
-     * Маскирует email для логирования (защита PII данных)
-     */
+
     private String maskEmail(String email) {
         if (email == null || email.isEmpty()) {
             return "unknown";

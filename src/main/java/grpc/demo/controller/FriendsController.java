@@ -166,16 +166,14 @@ public class FriendsController {
         }
         
         User friend = friendOpt.get();
-        
-        // Проверяем, является ли пользователь другом
+
         boolean isFriend = friendshipService.getFriends(currentUser.getId()).stream()
                 .anyMatch(f -> f.getId().equals(friend.getId()));
         
         model.addAttribute("title", "Профиль " + friend.getFullName());
         model.addAttribute("friend", friend);
         model.addAttribute("isFriend", isFriend);
-        
-        // Показываем вишлист друга, если он друг
+
         if (isFriend) {
             List<WishlistItem> friendItems = wishlistService.getItemsByUser(friend.getId());
             model.addAttribute("friendItems", friendItems);

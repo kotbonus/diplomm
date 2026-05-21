@@ -13,9 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Контроллер для управления зашифрованными резервными копиями базы данных
- */
+
 @Controller
 @RequestMapping("/admin/backup")
 @PreAuthorize("hasRole('ADMIN')")
@@ -26,9 +24,7 @@ public class BackupController {
     @Autowired
     private BackupService backupService;
     
-    /**
-     * Создает новую зашифрованную резервную копию
-     */
+
     @PostMapping("/create")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> createBackup() {
@@ -55,10 +51,7 @@ public class BackupController {
             return ResponseEntity.internalServerError().body(response);
         }
     }
-    
-    /**
-     * Восстанавливает базу данных из указанной резервной копии
-     */
+
     @PostMapping("/restore/{backupFileName}")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> restoreBackup(@PathVariable String backupFileName) {
@@ -90,10 +83,7 @@ public class BackupController {
             return ResponseEntity.internalServerError().body(response);
         }
     }
-    
-    /**
-     * Получает список всех доступных резервных копий
-     */
+
     @GetMapping("/list")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> listBackups() {
@@ -120,10 +110,6 @@ public class BackupController {
             return ResponseEntity.internalServerError().body(response);
         }
     }
-    
-    /**
-     * Удаляет указанную резервную копию
-     */
     @DeleteMapping("/delete/{backupFileName}")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> deleteBackup(@PathVariable String backupFileName) {
@@ -155,10 +141,6 @@ public class BackupController {
             return ResponseEntity.internalServerError().body(response);
         }
     }
-    
-    /**
-     * Отображает страницу управления резервными копиями
-     */
     @GetMapping
     public String backupManagementPage() {
         logger.info("Доступ к странице управления резервными копиями");

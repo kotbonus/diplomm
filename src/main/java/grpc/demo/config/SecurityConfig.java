@@ -30,7 +30,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // Включаем CSRF защиту с настройкой для API
+
             .csrf(csrf -> csrf
                 .ignoringRequestMatchers("/api/**", "/auth/**", "/h2-console/**")
             )
@@ -38,29 +38,21 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             )
             .authorizeHttpRequests(authz -> authz
-                // Публичные эндпоинты
+
                 .requestMatchers("/", "/auth/**", "/css/**", "/js/**", "/images/**", "/h2-console/**").permitAll()
-                // API эндпоинты требуют аутентификации
                 .requestMatchers("/api/**").authenticated()
-                // Все остальные запросы требуют аутентификации
                 .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider())
             .addFilterBefore(sessionAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            // Отключаем form login - используем AuthController
             .formLogin(form -> form.disable())
             .logout(logout -> logout
                 .logoutUrl("/auth/logout")
                 .logoutSuccessUrl("/auth/login?logout")
                 .permitAll()
             )
-            // Отключаем http basic
             .httpBasic(basic -> basic.disable())
-            // Настройка заголовков безопасности
             .headers(headers -> headers
-                .frameOptions(frameOptions -> frameOptions
-                    .deny() // Защита от clickjacking
-                )
                 .contentTypeOptions(contentTypeOptions -> {})
                 .httpStrictTransportSecurity(hstsConfig -> hstsConfig
                     .maxAgeInSeconds(31536000)
@@ -68,10 +60,9 @@ public class SecurityConfig {
                 )
                 .xssProtection(xssProtection -> {})
                 .contentSecurityPolicy(csp -> csp
-                    .policyDirectives("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none';")
+                    .policyDirectives("default-src 'self' 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-src 'self'; frame-ancestors 'self';")
                 )
-                // Отключаем frameOptions только для H2 console в development режиме
-                .frameOptions(frameOptions -> frameOptions.sameOrigin())
+                .frameOptions(frameOptions -> frameOptions.disable())
             );
         
         return http.build();

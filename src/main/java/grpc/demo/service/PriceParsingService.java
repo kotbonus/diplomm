@@ -132,8 +132,7 @@ public class PriceParsingService {
             MDC.clear();
         }
     }
-    
-    // Парсинг цены М.Видео через API
+
     private PriceResult parseMvideoPriceFromApi(String url) {
         try {
             // Извлекаем ID продукта из URL
@@ -141,8 +140,7 @@ public class PriceParsingService {
             if (productId == null) {
                 return PriceResult.error("Не удалось извлечь ID продукта из URL");
             }
-            
-            // Пробуем несколько API эндпоинтов
+
             String[] apiEndpoints = {
                 "https://www.mvideo.ru/bff/products/prices?productIds=" + productId,
                 "https://www.mvideo.ru/bff/product-details/" + productId + "/price",
@@ -180,12 +178,12 @@ public class PriceParsingService {
                         }
                     }
                 } catch (Exception e) {
-                    // Продолжаем со следующим эндпоинтом
+
                     continue;
                 }
             }
             
-            // Если API не сработало, пробуем стандартный метод с улучшенными селекторами
+
             return parseMvideoPriceFromHtml(url);
             
         } catch (Exception e) {
@@ -193,7 +191,7 @@ public class PriceParsingService {
         }
     }
     
-    // Парсинг М.Видео из HTML с улучшенными методами
+
     private PriceResult parseMvideoPriceFromHtml(String url) {
         try {
             Document doc = Jsoup.connect(url)
@@ -228,19 +226,17 @@ public class PriceParsingService {
             
             double price = findPriceWithMultipleSelectors(doc, enhancedSelectors);
             if (price > 0) {
-                // Пробуем найти старую цену и скидку
+
                 double oldPrice = findOldPriceInMvideo(doc);
                 double discount = (oldPrice > price) ? (oldPrice - price) : 0;
                 return PriceResult.success(price, oldPrice, discount);
             }
-            
-            // Если стандартные селекторы не сработали, пробуем JSON-LD
+
             double jsonLdPrice = extractMvideoPriceFromJsonLd(doc);
             if (jsonLdPrice > 0) {
                 return PriceResult.success(jsonLdPrice);
             }
-            
-            // Пробуем эвристический поиск
+
             double heuristicPrice = extractMvideoPriceHeuristic(doc);
             if (heuristicPrice > 0) {
                 return PriceResult.success(heuristicPrice);
@@ -252,8 +248,7 @@ public class PriceParsingService {
             return PriceResult.error("Ошибка при загрузке страницы М.Видео: " + e.getMessage());
         }
     }
-    
-    // Поиск старой цены на М.Видео
+
     private double findOldPriceInMvideo(Document doc) {
         String[] oldPriceSelectors = {
             ".price-block__old-price",
@@ -267,10 +262,9 @@ public class PriceParsingService {
         
         return findPriceWithMultipleSelectors(doc, oldPriceSelectors);
     }
-    
-    // Эвристический поиск цены М.Видео
+
     private double extractMvideoPriceHeuristic(Document doc) {
-        // Ищем элементы с текстовыми паттернами цен
+
         String[] pricePatterns = {
             "\\d+[\\s\\.,]*\\d{0,3}\\s*₽",
             "\\d+[\\s\\.,]*\\d{0,3}\\s*руб",
@@ -312,12 +306,10 @@ public class PriceParsingService {
         
         return 0.0;
     }
-    
-    // Извлечение ID продукта из URL М.Видео
+
     private String extractProductIdFromMvideoUrl(String url) {
         try {
-            // URL М.Видео: https://www.mvideo.ru/products/elektrogril-tefal-optigrill-gc712d34-serebristyi-20036881
-            // Пробуем несколько паттернов для разных форматов URL
+
             Pattern[] patterns = {
                 Pattern.compile("/products/.+-(\\d+)"),           // Основной паттерн
                 Pattern.compile("/products/(\\d+)"),               // Простой формат
@@ -331,13 +323,12 @@ public class PriceParsingService {
                     return matcher.group(1);
                 }
             }
-            
-            // Если ничего не помогло, пробуем извлечь последние цифры
+
             Pattern lastDigitsPattern = Pattern.compile("(\\d+)(?:\\?.*)?$");
             Matcher lastMatcher = lastDigitsPattern.matcher(url);
             if (lastMatcher.find()) {
                 String id = lastMatcher.group(1);
-                // Проверяем, что ID похож на ID товара (обычно 6-8 цифр)
+
                 if (id.length() >= 6 && id.length() <= 10) {
                     return id;
                 }
@@ -348,11 +339,10 @@ public class PriceParsingService {
             return null;
         }
     }
-    
-    // Парсинг ответа от API М.Видео
+
     private PriceResult parseMvideoApiResponse(String jsonResponse) {
         try {
-            // Пробуем несколько паттернов для извлечения цены
+
             Pattern[] pricePatterns = {
                 Pattern.compile("\"price\"\\s*:\\s*([0-9]+)"),                    // Простой формат
                 Pattern.compile("\"price\"\\s*:\\s*\"?([0-9]+)\"?"),           // С кавычками
@@ -377,8 +367,7 @@ public class PriceParsingService {
             if (currentPrice == 0) {
                 return PriceResult.error("Цена не найдена в ответе API");
             }
-            
-            // Ищем старую цену
+
             Pattern[] oldPricePatterns = {
                 Pattern.compile("\"oldPrice\"\\s*:\\s*([0-9]+)"),
                 Pattern.compile("\"oldPrice\"\\s*:\\s*\"?([0-9]+)\"?"),
@@ -398,8 +387,7 @@ public class PriceParsingService {
                     }
                 }
             }
-            
-            // Ищем скидку
+
             Pattern[] discountPatterns = {
                 Pattern.compile("\"discount\"\\s*:\\s*([0-9]+)"),
                 Pattern.compile("\"discount\"\\s*:\\s*\"?([0-9]+)\"?"),
@@ -419,8 +407,7 @@ public class PriceParsingService {
                     }
                 }
             }
-            
-            // Рассчитываем скидку если не нашли явно
+
             if (discount == 0 && oldPrice > currentPrice) {
                 discount = oldPrice - currentPrice;
             }
@@ -445,6 +432,8 @@ public class PriceParsingService {
             price = extractYandexMarketPrice(doc);
         } else if (url.contains("dvamyacha.ru")) {
             price = extractDvamyachaPrice(doc);
+        } else if (url.contains("tsum.ru")) {
+            price = extractTsumPrice(doc);
         } else if (url.contains("lamoda.ru")) {
             price = extractLamodaPrice(doc);
         } else if (url.contains("megamarket.ru")) {
@@ -543,21 +532,19 @@ public class PriceParsingService {
     }
 
     private double extractDvamyachaPrice(Document doc) {
-        // Сначала ищем текущую цену (приоритет)
+
         Elements currentPriceElements = doc.select(".product-item-detail-price-current");
         double currentPrice = findPriceInElements(currentPriceElements);
         if (currentPrice > 0) {
             return currentPrice;
         }
-        
-        // Если текущую не нашли, ищем любую цену с приоритетом на старую цену
+
         Elements oldPriceElements = doc.select(".product-item-detail-price-old");
         double oldPrice = findPriceInElements(oldPriceElements);
         if (oldPrice > 0) {
             return oldPrice;
         }
-        
-        // Ищем в микроразметке schema.org
+
         Elements schemaPriceElements = doc.select("[itemprop='price']");
         for (Element element : schemaPriceElements) {
             String priceStr = element.attr("content");
@@ -569,28 +556,24 @@ public class PriceParsingService {
                 }
             }
         }
-        
-        // Общий поиск ценовых элементов
+
         Elements priceElements = doc.select("[class*='price'], [class*='cost'], [class*='amount']");
         return findPriceInElements(priceElements);
     }
     
     private PriceResult extractDvamyachaPriceFull(Document doc) {
-        // Извлекаем текущую цену
+
         Elements currentPriceElements = doc.select(".product-item-detail-price-current");
         double currentPrice = findPriceInElements(currentPriceElements);
-        
-        // Извлекаем старую цену
+
         Elements oldPriceElements = doc.select(".product-item-detail-price-old");
         double oldPrice = findPriceInElements(oldPriceElements);
-        
-        // Извлекаем скидку
+
         Elements discountElements = doc.select(".product-item-detail-economy-price");
         double discount = findPriceInElements(discountElements);
-        
-        // Если не нашли текущую цену, пробуем другие методы
+
         if (currentPrice == 0) {
-            // Ищем в микроразметке schema.org
+
             Elements schemaPriceElements = doc.select("[itemprop='price']");
             for (Element element : schemaPriceElements) {
                 String priceStr = element.attr("content");
@@ -604,15 +587,14 @@ public class PriceParsingService {
                 }
             }
         }
-        
-        // Если все еще не нашли цену, используем общий поиск
+
         if (currentPrice == 0) {
             Elements priceElements = doc.select("[class*='price'], [class*='cost'], [class*='amount']");
             currentPrice = findPriceInElements(priceElements);
         }
         
         if (currentPrice > 0) {
-            // Рассчитываем скидку, если не нашли явно
+
             if (discount == 0 && oldPrice > currentPrice) {
                 discount = oldPrice - currentPrice;
             }
@@ -620,6 +602,102 @@ public class PriceParsingService {
         } else {
             return PriceResult.error("Цена не найдена на странице");
         }
+    }
+
+    private double extractTsumPrice(Document doc) {
+
+        String[] selectors = {
+            ".ts-product-price",
+            ".product-price",
+            ".price-current",
+            "[data-testid='product-price']",
+            "[class*='price']",
+            "[itemprop='price']"
+        };
+        
+
+        for (String selector : selectors) {
+            Elements elements = doc.select(selector);
+            for (Element element : elements) {
+                String text = element.text().trim();
+
+                if (text.matches(".*\\d+.*") && (text.contains("₽") || text.contains("руб") || text.contains("р."))) {
+                    try {
+                        double price = parseTsumPriceString(text);
+                        if (price > 100) {
+                            return price;
+                        }
+                    } catch (Exception e) {
+                        continue;
+                    }
+                }
+            }
+        }
+        
+
+        Elements schemaPriceElements = doc.select("[itemprop='price']");
+        for (Element element : schemaPriceElements) {
+            String priceStr = element.attr("content");
+            if (!priceStr.isEmpty()) {
+                try {
+                    double price = Double.parseDouble(priceStr);
+                    if (price > 100) {
+                        return price;
+                    }
+                } catch (NumberFormatException e) {
+                    continue;
+                }
+            }
+        }
+
+        double jsonLdPrice = extractJsonLdPrice(doc);
+        if (jsonLdPrice > 100) {
+            return jsonLdPrice;
+        }
+
+        return 0.0;
+    }
+
+    private double parseTsumPriceString(String priceStr) {
+        if (priceStr == null || priceStr.trim().isEmpty()) {
+            return 0.0;
+        }
+
+        priceStr = priceStr.replace("&nbsp;", " ")
+                          .replace("&#8381;", "₽")
+                          .replace("&#x20bd;", "₽")
+                          .replace("\u00A0", " ")  // неразрывный пробел
+                          .replace("\u2009", " ")  // тонкий пробел
+                          .replace("\u202F", " ")  // узкий неразрывный пробел
+                          .replace("\u2007", " ")  // цифровой пробел
+                          .replace("\u200B", "");  // нулевой ширины пробел
+
+        priceStr = priceStr.replaceAll("[₽rubрРUBRUB]", "").trim();
+
+        Pattern pricePattern = Pattern.compile("(\\d{1,3}(?:[\\s\\.,]\\d{3})*(?:[\\.,]\\d{2})?)");
+        Matcher matcher = pricePattern.matcher(priceStr);
+
+        if (matcher.find()) {
+            String cleanPrice = matcher.group(1).replaceAll("[\\s\\.,]", "");
+            try {
+                return Double.parseDouble(cleanPrice);
+            } catch (NumberFormatException e) {
+                return 0.0;
+            }
+        }
+        
+        // Если основной паттерн не сработал, пробуем найти просто все цифры
+        Pattern digitsPattern = Pattern.compile("\\d+");
+        Matcher digitsMatcher = digitsPattern.matcher(priceStr);
+        if (digitsMatcher.find()) {
+            try {
+                return Double.parseDouble(digitsMatcher.group());
+            } catch (NumberFormatException e) {
+                return 0.0;
+            }
+        }
+        
+        return 0.0;
     }
 
     private double extractGenericPrice(Document doc) {
@@ -645,32 +723,26 @@ public class PriceParsingService {
         return 0.0;
     }
 
-    // Универсальный метод парсинга с эвристиками
     private double extractUniversalPrice(Document doc) {
-        // 1. Микроразметка Schema.org
+
         double schemaPrice = extractSchemaPrice(doc);
         if (schemaPrice > 0) return schemaPrice;
 
-        // 2. JSON-LD структурированные данные
         double jsonLdPrice = extractJsonLdPrice(doc);
         if (jsonLdPrice > 0) return jsonLdPrice;
 
-        // 3. Мета-теги
         double metaPrice = extractMetaPrice(doc);
         if (metaPrice > 0) return metaPrice;
 
-        // 4. Расширенные селекторы цен
         double extendedPrice = extractExtendedPriceSelectors(doc);
         if (extendedPrice > 0) return extendedPrice;
 
-        // 5. Эвристический поиск по текстовым паттернам
         double heuristicPrice = extractHeuristicPrice(doc);
         if (heuristicPrice > 0) return heuristicPrice;
 
         return 0.0;
     }
 
-    // Извлечение цены из микроразметки Schema.org
     private double extractSchemaPrice(Document doc) {
         Elements priceElements = doc.select("[itemprop='price'], [property='price'], [data-price]");
         for (Element element : priceElements) {
@@ -689,7 +761,6 @@ public class PriceParsingService {
         return 0.0;
     }
 
-    // Извлечение цены из JSON-LD
     private double extractJsonLdPrice(Document doc) {
         Elements scripts = doc.select("script[type='application/ld+json']");
         for (Element script : scripts) {
@@ -710,7 +781,6 @@ public class PriceParsingService {
         return 0.0;
     }
 
-    // Извлечение цены из мета-тегов
     private double extractMetaPrice(Document doc) {
         String[] metaSelectors = {
             "meta[name='price']",
@@ -736,21 +806,15 @@ public class PriceParsingService {
         return 0.0;
     }
 
-    // Расширенные селекторы цен
     private double extractExtendedPriceSelectors(Document doc) {
         String[][] selectors = {
-            // Основные ценовые селекторы
             {"[class*='price']", "[class*='cost']", "[class*='amount']", "[class*='sum']"},
-            // Конкретные классы цен
             {".price", ".price-current", ".price-actual", ".price-now", ".price-final"},
             {".cost", ".cost-actual", ".cost-now", ".cost-final"},
             {".amount", ".sum", ".total", ".value"},
-            // Селекторы с data-атрибутами
             {"[data-price]", "[data-cost]", "[data-amount]", "[data-value]"},
-            // Специфичные для маркетплейсов
             {".product-price", ".item-price", ".goods-price", ".offer-price"},
             {".final-price", ".current-price", ".actual-price", ".sale-price"},
-            // Русскоязычные селекторы
             {"[class*='цена']", "[class*='стоимость']", "[class*='сумма']"},
             {".цена", ".стоимость", ".сумма", ".итого"}
         };
@@ -767,9 +831,7 @@ public class PriceParsingService {
         return 0.0;
     }
 
-    // Эвристический поиск цены
     private double extractHeuristicPrice(Document doc) {
-        // Ищем элементы с текстовыми паттернами цен
         String[] pricePatterns = {
             "\\d+[\\s\\.,]*\\d{0,3}\\s*₽",
             "\\d+[\\s\\.,]*\\d{0,3}\\s*руб",
@@ -796,13 +858,11 @@ public class PriceParsingService {
         return 0.0;
     }
 
-    // Универсальный парсер строки с ценой
     private double parsePriceString(String priceStr) {
         if (priceStr == null || priceStr.trim().isEmpty()) {
             return 0.0;
         }
 
-        // Очистка строки
         priceStr = priceStr.replace("&nbsp;", " ")
                           .replace("&#8381;", "₽")
                           .replace("&#x20bd;", "₽")
@@ -811,7 +871,6 @@ public class PriceParsingService {
                           .replace("\u202F", " ")
                           .replace("\u2007", " ");
 
-        // Поиск ценового паттерна
         Pattern pricePattern = Pattern.compile("(\\d{1,3}(?:[\\s\\.,]\\d{3})*(?:[\\.,]\\d{2})?)");
         Matcher matcher = pricePattern.matcher(priceStr);
 
@@ -831,7 +890,6 @@ public class PriceParsingService {
         
         for (Element element : elements) {
             String text = element.text();
-            // Декодируем HTML entities
             text = text.replace("&nbsp;", " ")
                        .replace("&#8381;", "₽")
                        .replace("&#x20bd;", "₽");
@@ -857,7 +915,6 @@ public class PriceParsingService {
         return 0.0;
     }
 
-    // Lamoda
     private double extractLamodaPrice(Document doc) {
         String[] selectors = {
             ".product-overview__price .product-overview__price--current",
@@ -869,7 +926,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // СберМегаМаркет
     private double extractMegamarketPrice(Document doc) {
         String[] selectors = {
             ".product-price",
@@ -881,7 +937,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // DNS
     private double extractDnsPrice(Document doc) {
         String[] selectors = {
             ".product-card-price__current",
@@ -893,7 +948,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // Ситилинк
     private double extractCitilinkPrice(Document doc) {
         String[] selectors = {
             ".ProductCardVerticalPrice__current",
@@ -905,10 +959,8 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // М.Видео
     private double extractMvideoPrice(Document doc) {
-        // М.Видео использует SPA, поэтому стандартные селекторы могут не работать
-        // Пробуем сначала стандартные селекторы
+
         String[] selectors = {
             ".price-block__final-price",
             ".price__main",
@@ -924,20 +976,17 @@ public class PriceParsingService {
         if (price > 0) {
             return price;
         }
-        
-        // Если стандартные методы не сработали, пробуем извлечь из JSON-LD
+
         return extractMvideoPriceFromJsonLd(doc);
     }
-    
-    // Извлечение цены М.Видео из JSON-LD
+
     private double extractMvideoPriceFromJsonLd(Document doc) {
         Elements scripts = doc.select("script[type='application/ld+json']");
         for (Element script : scripts) {
             String json = script.html();
             try {
-                // Ищем цену в JSON-LD структурированных данных
+
                 if (json.contains("\"price\"")) {
-                    // Пробуем несколько паттернов для извлечения цены
                     Pattern[] pricePatterns = {
                         Pattern.compile("\"price\"\\s*:\\s*\"?([^\",}]+)\"?"),
                         Pattern.compile("\"offers\"\\s*:\\s*{[^}]*\"price\"\\s*:\\s*\"?([^\",}]+)\"?"),
@@ -962,7 +1011,6 @@ public class PriceParsingService {
         return 0.0;
     }
 
-    // Эльдорадо
     private double extractEldoradoPrice(Document doc) {
         String[] selectors = {
             ".price__current",
@@ -974,7 +1022,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // Технопарк
     private double extractTechnoparkPrice(Document doc) {
         String[] selectors = {
             ".price-current",
@@ -986,7 +1033,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // Пульт.ру
     private double extractPultPrice(Document doc) {
         String[] selectors = {
             ".price-current",
@@ -1010,7 +1056,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // Холодильник.ру
     private double extractHolodilnikPrice(Document doc) {
         String[] selectors = {
             ".price-current",
@@ -1022,7 +1067,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // Перекрёсток
     private double extractPerekrestokPrice(Document doc) {
         String[] selectors = {
             ".price-regular",
@@ -1034,7 +1078,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // Ашан
     private double extractAuchanPrice(Document doc) {
         String[] selectors = {
             ".product-price",
@@ -1046,7 +1089,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // Delivery Club
     private double extractDeliveryClubPrice(Document doc) {
         String[] selectors = {
             ".product-price",
@@ -1058,7 +1100,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // Самокат
     private double extractSamokatPrice(Document doc) {
         String[] selectors = {
             ".product-price",
@@ -1070,7 +1111,6 @@ public class PriceParsingService {
         return findPriceWithMultipleSelectors(doc, selectors);
     }
 
-    // Ozon Travel
     private double extractOzonTravelPrice(Document doc) {
         String[] selectors = {
             ".price-current",

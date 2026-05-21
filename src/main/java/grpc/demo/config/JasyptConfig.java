@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Конфигурация Jasypt для шифрования конфигурационных файлов
- */
+
 @Configuration
 public class JasyptConfig {
 
@@ -20,7 +18,7 @@ public class JasyptConfig {
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
         
-        // Получаем пароль
+
         String password = System.getProperty("jasypt.encryptor.password");
         if (password == null) {
             password = System.getenv("JASYPT_ENCRYPTOR_PASSWORD");

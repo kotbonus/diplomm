@@ -16,11 +16,11 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner initData(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            // Проверяем, есть ли уже пользователи
+
             if (userRepository.count() == 0) {
                 System.out.println("База данных пуста, добавляем тестовых пользователей...");
                 
-                // Добавляем тестовых пользователей
+
                 User admin = new User();
                 admin.setEmail("admin@wishlist.com");
                 admin.setFirstName("Admin");

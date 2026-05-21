@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Configuration
 public class MetricsConfig {
 
-    // Счетчики для бизнес-метрик
+
     @Bean
     public Counter userRegistrations(MeterRegistry registry) {
         return Counter.builder("user.registrations")
@@ -86,7 +86,7 @@ public class MetricsConfig {
                 .register(registry);
     }
 
-    // Таймеры для производительности
+
     @Bean
     public Timer priceParsingTimer(MeterRegistry registry) {
         return Timer.builder("price.parsing.duration")
@@ -111,7 +111,7 @@ public class MetricsConfig {
                 .register(registry);
     }
 
-    // Гейджи для текущих значений
+
     @Bean
     public AtomicInteger activeUsers(MeterRegistry registry) {
         return registry.gauge("users.active", new AtomicInteger(0));
@@ -127,7 +127,7 @@ public class MetricsConfig {
         return registry.gauge("price.parsing.queue.size", new AtomicInteger(0));
     }
 
-    // Метрики безопасности
+
     @Bean
     public Counter authenticationFailures(MeterRegistry registry) {
         return Counter.builder("security.auth.failures")

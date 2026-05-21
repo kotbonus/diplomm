@@ -19,9 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Сервис для создания и управления зашифрованными резервными копиями базы данных
- */
+
 @Service
 public class BackupService {
     
@@ -36,53 +34,41 @@ public class BackupService {
     
     @Value("${backup.encryption.key:}")
     private String backupEncryptionKey;
-    
-    /**
-     * Создает зашифрованную резервную копию базы данных
-     */
+
     public String createEncryptedBackup() {
         logger.info("Начало создания зашифрованной резервной копии базы данных");
         
         try {
-            // Создаем директорию для бэкапов, если она не существует
             Path backupPath = Paths.get(backupDirectory);
             if (!Files.exists(backupPath)) {
                 Files.createDirectories(backupPath);
                 logger.info("Создана директория для бэкапов: {}", backupDirectory);
             }
-            
-            // Генерируем имя файла с временной меткой
+
             String timestamp = LocalDateTime.now().format(TIMESTAMP_FORMAT);
             String backupFileName = String.format("wishlist_backup_%s.sql.enc", timestamp);
             String backupFilePath = backupPath.resolve(backupFileName).toString();
-            
-            // Получаем данные из всех таблиц
+
             StringBuilder backupData = new StringBuilder();
             backupData.append("-- Wishlist Database Backup\n");
             backupData.append("-- Created: ").append(LocalDateTime.now()).append("\n");
             backupData.append("-- Database: H2 In-Memory Database\n\n");
-            
-            // Добавляем данные таблицы users
+
             backupData.append(exportTableData("users"));
-            
-            // Добавляем данные таблицы friendships
+
             backupData.append(exportTableData("friendships"));
-            
-            // Добавляем данные таблицы wishlist_items
+
             backupData.append(exportTableData("wishlist_items"));
-            
-            // Шифруем данные бэкапа
+
             String encryptionKey = getBackupEncryptionKey();
             String encryptedData = EncryptionUtil.encryptBackup(backupData.toString(), encryptionKey);
-            
-            // Сохраняем зашифрованный бэкап в файл
+
             try (FileWriter writer = new FileWriter(backupFilePath)) {
                 writer.write(encryptedData);
             }
             
             logger.info("Зашифрованная резервная копия успешно создана: {}", backupFileName);
-            
-            // Сохраняем ключ шифрования в отдельный файл (в реальном приложении его нужно хранить безопаснее)
+
             String keyFileName = backupFileName.replace(".sql.enc", ".key");
             String keyFilePath = backupPath.resolve(keyFileName).toString();
             try (FileWriter keyWriter = new FileWriter(keyFilePath)) {
@@ -99,15 +85,13 @@ public class BackupService {
         }
     }
     
-    /**
-     * Экспортирует данные из указанной таблицы
-     */
+
     private String exportTableData(String tableName) {
         StringBuilder sb = new StringBuilder();
         sb.append("-- Data for table: ").append(tableName).append("\n");
         
         try {
-            // Получаем метаданные таблицы
+
             List<Map<String, Object>> columns = jdbcTemplate.queryForList(
                 "SELECT COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = ?",
                 tableName
@@ -117,16 +101,14 @@ public class BackupService {
                 sb.append("-- Table ").append(tableName).append(" is empty or doesn't exist\n\n");
                 return sb.toString();
             }
-            
-            // Получаем все данные из таблицы
+
             List<Map<String, Object>> rows = jdbcTemplate.queryForList("SELECT * FROM " + tableName);
             
             if (rows.isEmpty()) {
                 sb.append("-- Table ").append(tableName).append(" has no data\n\n");
                 return sb.toString();
             }
-            
-            // Формируем INSERT statements
+
             for (Map<String, Object> row : rows) {
                 StringBuilder columnsPart = new StringBuilder();
                 StringBuilder valuesPart = new StringBuilder();
@@ -170,10 +152,7 @@ public class BackupService {
         
         return sb.toString();
     }
-    
-    /**
-     * Восстанавливает базу данных из зашифрованной резервной копии
-     */
+
     public boolean restoreFromEncryptedBackup(String backupFileName) {
         logger.info("Начало восстановления из зашифрованной резервной копии: {}", backupFileName);
         
@@ -181,8 +160,7 @@ public class BackupService {
             String backupFilePath = Paths.get(backupDirectory, backupFileName).toString();
             String keyFileName = backupFileName.replace(".sql.enc", ".key");
             String keyFilePath = Paths.get(backupDirectory, keyFileName).toString();
-            
-            // Проверяем существование файлов
+
             if (!Files.exists(Paths.get(backupFilePath))) {
                 logger.error("Файл бэкапа не найден: {}", backupFilePath);
                 return false;
@@ -192,18 +170,14 @@ public class BackupService {
                 logger.error("Файл ключа не найден: {}", keyFilePath);
                 return false;
             }
-            
-            // Читаем ключ шифрования
+
             String encryptionKey = new String(Files.readAllBytes(Paths.get(keyFilePath)));
-            
-            // Читаем и дешифруем бэкап
+
             String encryptedData = new String(Files.readAllBytes(Paths.get(backupFilePath)));
             String decryptedData = EncryptionUtil.decryptBackup(encryptedData, encryptionKey);
-            
-            // Очищаем текущие данные
+
             clearDatabase();
-            
-            // Выполняем SQL команды из бэкапа
+
             String[] sqlStatements = decryptedData.split(";\n");
             for (String statement : sqlStatements) {
                 statement = statement.trim();
@@ -224,10 +198,7 @@ public class BackupService {
             return false;
         }
     }
-    
-    /**
-     * Очищает все таблицы базы данных
-     */
+
     private void clearDatabase() {
         logger.info("Очистка базы данных перед восстановлением");
         
@@ -241,24 +212,17 @@ public class BackupService {
             throw new RuntimeException("Не удалось очистить базу данных", e);
         }
     }
-    
-    /**
-     * Получам ключ шифрования для бэкапов
-     */
+
     private String getBackupEncryptionKey() {
         if (backupEncryptionKey != null && !backupEncryptionKey.isEmpty()) {
             return backupEncryptionKey;
         }
-        
-        // Генерируем новый ключ, если он не задан
+
         String newKey = EncryptionUtil.generateBackupKey();
         logger.info("Сгенерирован новый ключ шифрования для бэкапов");
         return newKey;
     }
-    
-    /**
-     * Получает список всех резервных копий
-     */
+
     public List<String> listBackups() {
         try {
             Path backupPath = Paths.get(backupDirectory);
@@ -277,10 +241,7 @@ public class BackupService {
             return List.of();
         }
     }
-    
-    /**
-     * Удаляет указанную резервную копию и ее ключ
-     */
+
     public boolean deleteBackup(String backupFileName) {
         try {
             String backupFilePath = Paths.get(backupDirectory, backupFileName).toString();

@@ -9,7 +9,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Аватары
         String projectRoot = System.getProperty("user.dir");
         String avatarPath = projectRoot.replace("\\", "/") + "/avatars/";
         registry.addResourceHandler("/avatars/**")
